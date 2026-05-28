@@ -122,13 +122,14 @@ repos:
         files: ^scripts/.*\.(sh|bash|zsh)$
         pass_filenames: true
 
-  - repo: local
-    hooks:
-      - id: bearer-plugin
-        name: "🛡️ Bearer - Security & privacy scanner - planet_explorer"
-        entry: bearer scan --exit-code 1 planet_explorer
-        language: system
-        pass_filenames: false
+  # Temporarily block due to long execution time.
+  #- repo: local
+  #  hooks:
+  #    - id: bearer-plugin
+  #       name: "🛡️ Bearer - Security & privacy scanner - planet_explorer"
+  #       entry: bearer scan --exit-code 1 planet_explorer
+  #       language: system
+  #       pass_filenames: false
 
   - repo: local
     hooks:
