@@ -13,9 +13,13 @@ ENV_FILE=".env"
 
 REQUIRED_EXTENSIONS=(
   # Python
-  ms-python.debugpy@2026.6.0
-  ms-python.python@2026.4.0
-  ms-python.vscode-python-envs@1.20.1
+  "ms-python.debugpy@2026.6.0"
+  "ms-python.python@2026.4.0"
+  "ms-python.vscode-python-envs@1.20.1"
+  # XML
+  "redhat.vscode-xml@0.29.2"
+  # Makefile
+  "ms-vscode.makefile-tools@0.12.17"
 )
 
 # ----------------------------------------------
@@ -29,6 +33,10 @@ launch_antigravity() {
 }
 
 list_installed_extensions() {
+  if [[ ! -d "$ANTIGRAVITY_EXT_DIR" ]]; then
+    return
+  fi
+
   fd --hidden --no-ignore --max-depth 1 --min-depth 1 --type d --search-path "$ANTIGRAVITY_EXT_DIR" | while read -r dir; do
     pkg="$dir/package.json"
     if [[ -f "$pkg" ]]; then
@@ -37,6 +45,32 @@ list_installed_extensions() {
       version=$(jq -r '.version' <"$pkg")
       echo "${publisher}.${name}@${version}"
     fi
+  done
+}
+
+install_required_extensions() {
+  echo "🗨️ Checking and installing required extensions..."
+  local installed_exts
+  installed_exts=$(list_installed_extensions)
+
+  for ext in "${REQUIRED_EXTENSIONS[@]}"; do
+      if echo "$installed_exts" | grep -q "^${ext}$"; then
+          echo "  ✅ Extension ${ext} already installed."
+      else
+          echo "  📦 Installing ${ext}..."
+          if launch_antigravity --install-extension "${ext}" >>"$LOG_FILE" 2>&1; then
+              installed_exts=$(list_installed_extensions)
+              if echo "$installed_exts" | grep -q "^${ext}$"; then
+                  echo "  ✅ Successfully installed ${ext}."
+              else
+                  echo "  ❌ Failed to install ${ext} (not found after install)."
+                  exit 1
+              fi
+          else
+              echo "  ❌ Failed to install ${ext} (error during install). Check $LOG_FILE for details."
+              exit 1
+          fi
+      fi
   done
 }
 
@@ -52,17 +86,17 @@ This script sets up and launches Antigravity with a custom profile and extension
 
 Actions performed:
     - Checks for required files and directories
-    - Ensures Antigravity and Docker are installed
+    - Ensures Antigravity is installed
     - Initializes Antigravity user and extension directories if needed
-    - Updates Antigravity settings for commit signing, formatters, and linters (Markdown, Shell, Python)
     - Installs all required Antigravity extensions
     - Launches Antigravity with the specified profile and directories
 
 Options:
-    --help             Show this help message and exit
-    --verbose          Print final settings.json contents before launching Antigravity
-    --list-extensions  List installed Antigravity extensions
-    --clean            Remove the "$ANTIGRAVITY_USER_DIR" and "$ANTIGRAVITY_EXT_DIR" directories completely
+    --help                             Show this help message and exit
+    --verbose                          Print final settings.json contents before launching Antigravity
+    --list-extensions                  List installed Antigravity extensions
+    --install-required-extensions      Install all required Antigravity extensions
+    --clean                            Remove the "$ANTIGRAVITY_USER_DIR" and "$ANTIGRAVITY_EXT_DIR" directories completely
 
 EOF
 }
@@ -75,7 +109,11 @@ for arg in "$@"; do
       exit 0
       ;;
     --verbose)
-      # Handled later in the script
+      # Handled later in the script if needed
+      ;;
+    --install-required-extensions)
+      install_required_extensions
+      exit 0
       ;;
     --list-extensions)
       echo "Installed extensions:"
@@ -83,7 +121,7 @@ for arg in "$@"; do
       exit 0
       ;;
     --clean)
-      echo "Remove .vscode and .vscode-extensions folders:"
+      echo "Removing custom Antigravity environments..."
       clean
       exit 0
       ;;
@@ -112,8 +150,6 @@ QGIS_PREFIX=$(dirname "$(dirname "$QGIS_BIN")")
 
 # Construct the correct QGIS Python path
 QGIS_PYTHON_PATH="$QGIS_PREFIX/share/qgis/python"
-# Needed for qgis processing module import
-# PROCESSING_PATH="$QGIS_PREFIX/share/qgis/python/qgis"
 
 # Check if the Python directory exists
 if [[ ! -d "$QGIS_PYTHON_PATH" ]]; then
@@ -123,11 +159,10 @@ fi
 
 echo "Creating Antigravity .env file..."
 cat <<EOF >"$ENV_FILE"
-PYTHONPATH=$QGIS_PYTHON_PATH:$QTPOSITIONING
-# needed for launch.json
+PYTHONPATH=$QGIS_PYTHON_PATH
 QGIS_EXECUTABLE=$QGIS_BIN
 QGIS_PREFIX_PATH=$QGIS_PREFIX
-PYQT6_PATH="$QGIS_PREFIX/share/qgis/python/PyQt"
+PYQT6_PATH=$QGIS_PREFIX/share/qgis/python/PyQt
 QT_QPA_PLATFORM=offscreen
 EOF
 
@@ -136,7 +171,7 @@ echo "Contents of .env:"
 cat "$ENV_FILE"
 
 # Also set the python path in this shell in case we want to run tests etc from the command line
-export PYTHONPATH=$PYTHONPATH:$QGIS_PYTHON_PATH
+export PYTHONPATH="${PYTHONPATH:+$PYTHONPATH:}$QGIS_PYTHON_PATH"
 
 echo "🗨️ Checking Antigravity is installed ..."
 if ! command -v antigravity &>/dev/null; then
@@ -146,16 +181,15 @@ else
     echo "  ✅ Antigravity found ok."
 fi
 
-# Ensure .antigravity directory exists
 echo "🗨️  Checking if Antigravity has been run before..."
-if [ ! -d $ANTIGRAVITY_USER_DIR ]; then
+if [[ ! -d "$ANTIGRAVITY_USER_DIR" ]]; then
     echo "  🔻🔻🔻🔻🔻🔻🔻🔻🔻🔻🔻🔻🔻🔻🔻🔻🔻🔻🔻🔻🔻🔻🔻🔻🔻🔻🔻🔻🔻"
     echo "  ⭐️ It appears you have not run antigravity in this project before."
     echo "     After it opens, please close antigravity and then rerun this script"
     echo "     so that the extensions directory initialises properly."
     echo "  🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺🔺"
-    mkdir -p $ANTIGRAVITY_USER_DIR
-    mkdir -p $ANTIGRAVITY_EXT_DIR
+    mkdir -p "$ANTIGRAVITY_USER_DIR"
+    mkdir -p "$ANTIGRAVITY_EXT_DIR"
     # Launch Antigravity with the sandboxed environment
     launch_antigravity .
     exit 1
@@ -163,32 +197,8 @@ else
     echo "  ✅ Antigravity directory found from previous runs of antigravity."
 fi
 
-# USER_SETTINGS_JSON="$ANTIGRAVITY_USER_DIR/User/settings.json"
-# PROFILE_SETTINGS_JSON="$ANTIGRAVITY_USER_DIR/profiles/$ANTIGRAVITY_PROFILE/settings.json"
-
-echo "🗨️ Installing required extensions..."
-installed_exts=$(list_installed_extensions)
-for ext in "${REQUIRED_EXTENSIONS[@]}"; do
-    if echo "$installed_exts" | grep -q "^${ext}$"; then
-        echo "  ✅ Extension ${ext} already installed."
-    else
-        echo "  📦 Installing ${ext}..."
-        # Capture both stdout and stderr to log file
-        if launch_antigravity --install-extension "${ext}" >>"$LOG_FILE" 2>&1; then
-            # Refresh installed_exts after install
-            installed_exts=$(list_installed_extensions)
-            if echo "$installed_exts" | grep -q "^${ext}$"; then
-                echo "  ✅ Successfully installed ${ext}."
-            else
-                echo "  ❌ Failed to install ${ext} (not found after install)."
-                exit 1
-            fi
-        else
-            echo "  ❌ Failed to install ${ext} (error during install). Check $LOG_FILE for details."
-            exit 1
-        fi
-    fi
-done
+# Automatically sync extensions on script run before boot
+install_required_extensions
 
 echo "🗨️ Launching Antigravity..."
 launch_antigravity .
