@@ -60,6 +60,7 @@
         p.isort
         p.jq
         p.markdownlint-cli
+        p.nixd # for nix language server in vscode
         p.nixfmt
         p.pre-commit
         p.privoxy
@@ -164,19 +165,6 @@
           echo "No requirements.txt found, skipping pip install."
         fi
 
-        QGIS3_PLUGIN_DIR="$HOME/.local/share/QGIS/QGIS3/profiles/${profileName}/python/plugins"
-        QGIS4_PLUGIN_DIR="$HOME/.local/share/QGIS/QGIS4/profiles/${profileName}/python/plugins"
-
-        if [ ! -e "$QGIS3_PLUGIN_DIR/planet_explorer" ]; then
-          mkdir -p $QGIS3_PLUGIN_DIR
-          ln -s "$(pwd)/planet_explorer" "$QGIS3_PLUGIN_DIR/planet_explorer"
-        fi
-
-        if [ ! -e "$QGIS4_PLUGIN_DIR/planet_explorer" ]; then
-          mkdir -p $QGIS4_PLUGIN_DIR
-          ln -s "$(pwd)/planet_explorer" "$QGIS4_PLUGIN_DIR/planet_explorer"
-        fi
-
         echo "-----------------------"
         echo "🌈 Your Dev Environment is prepared."
         echo "To run QGIS with your profile, use one of these commands:"
@@ -204,9 +192,9 @@
         echo "   ./scripts/privoxy.sh stop"
         echo "-----------------------"
         echo ""
-        pre-commit clean > /dev/null
-        pre-commit install --install-hooks > /dev/null
-        pre-commit run --all-files || true
+        # pre-commit clean > /dev/null
+        # pre-commit install --install-hooks > /dev/null
+        # pre-commit run --all-files || true
       '';
 
     in
