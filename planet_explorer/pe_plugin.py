@@ -230,7 +230,7 @@ class PlanetExplorer(object):
                         "ProxyError.\n Verify that your proxy is correctly configured"
                         " in the QGIS settings"
                     )
-                elif issubclass(t, planet.api.exceptions.ServerError):
+                elif issubclass(t, planet.exceptions.APIError):
                     s = "Server Error.\n Please, try again later"
                 elif issubclass(t, urllib3.exceptions.ProxySchemeUnknown):
                     s = (
