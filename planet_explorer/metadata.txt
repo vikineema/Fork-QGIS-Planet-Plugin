@@ -24,7 +24,7 @@ hasProcessingProvider=no
 # Uncomment the following line and add your changelog:
 changelog=
   v3.0.0 (2026-09-14)
-  * Use planet SDK v3.0.*
+  * Use planet SDK v3.6.0
   * Add support for QGIS 4.0
   * Switch to OAuth2 token for all authentication from API keys
   * Remove API key actions
