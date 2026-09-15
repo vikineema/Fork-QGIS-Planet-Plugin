@@ -22,7 +22,6 @@ prompt-toolkit==3.0.52
 PyJWT==2.13.0
 pyqrcode==1.2.1
 StrEnum==0.4.15
-tqdm==4.68.4
 wcwidth==0.8.2
 httpcore[asyncio]==1.0.9
 h11==0.16.0
