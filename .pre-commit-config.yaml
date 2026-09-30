@@ -10,23 +10,36 @@ repos:
         language: system
         types: [text]
         exclude: ^(planet_explorer/tests/data/)
+
       - id: trailing-whitespace
         name: "🧹 Trim Trailing Whitespace"
         entry: trailing-whitespace-fixer
         language: system
         types: [text]
         exclude: ^(planet_explorer/tests/data/)
+
       - id: check-yaml
         name: "🔍 Check YAML Syntax"
         entry: check-yaml
         language: system
         types: [yaml]
+
       - id: check-json
         name: "🔍 Check JSON Syntax"
         entry: check-json
         language: system
         types: [json]
         exclude: ^(planet_explorer/planet_api/request-result-samples/)
+
+  - repo: local
+    hooks:
+      - id: yamllint
+        name: "🔍 yamllint - YAML linter"
+        entry: yamllint
+        args: ["-c", ".config/.yamllint"]
+        language: system
+        types: [yaml]
+        stages: [pre-commit]
 
   - repo: local
     hooks:
@@ -109,15 +122,6 @@ repos:
 
   - repo: local
     hooks:
-      - id: yamllint
-        name: "🔍 yamllint - YAML linter"
-        entry: yamllint
-        language: system
-        types: [yaml]
-        stages: [pre-commit]
-
-  - repo: local
-    hooks:
       - id: actionlint
         name: "🤖 actionlint - GitHub Actions workflow linter"
         entry: actionlint
@@ -170,11 +174,11 @@ repos:
         language: system
 
     # - repo: local
-  #   hooks:
-  #     - id: codeql-scan
-  #       name: "🔎 CodeQL - Static code analysis"
-  #       entry: codeql database analyze --format=sarifv2.1.0 --output=codeql-results.sarif codeql-db codeql-db/db-python-queries planet_explorer
-  #       language: system
-  #       pass_filenames: false
-  #       stages: [pre-commit]
-  #       description: "Run CodeQL static analysis on the planet_explorer folder"
+    #   hooks:
+    #     - id: codeql-scan
+    #       name: "🔎 CodeQL - Static code analysis"
+    #       entry: codeql database analyze --format=sarifv2.1.0 --output=codeql-results.sarif codeql-db codeql-db/db-python-queries planet_explorer
+    #       language: system
+    #       pass_filenames: false
+    #       stages: [pre-commit]
+    #       description: "Run CodeQL static analysis on the planet_explorer folder"
