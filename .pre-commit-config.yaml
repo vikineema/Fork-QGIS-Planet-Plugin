@@ -31,6 +31,14 @@ repos:
         types: [json]
         exclude: ^(planet_explorer/planet_api/request-result-samples/)
 
+      - id: pretty-format-json
+        name: "🧾 Format JSON files"
+        entry: pretty-format-json
+        args: ["--autofix"]
+        exclude: ^(planet_explorer/planet_api/request-result-samples/)
+        language: system
+        types: [json]
+
   - repo: local
     hooks:
       - id: yamllint
