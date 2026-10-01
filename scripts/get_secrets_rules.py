@@ -1,5 +1,3 @@
-import json
-
 import requests
 
 url = "https://raw.githubusercontent.com/qgis/QGIS-Plugins-Website/refs/heads/master/qgis-app/plugins/management/commands/data/secrets_rules.json"
