@@ -120,6 +120,14 @@ repos:
         files: ^\.github/workflows/.*\.ya?ml$
         stages: [pre-commit]
 
+  - repo: local
+    hooks:
+      - id: taplo-fmt
+        name: "🧵 Format and lint TOML files using taplo"
+        entry: taplo fmt
+        args: ["--config", ".config/.taplo.toml"]
+        language: system
+        types: [toml]
 
   - repo: local
     hooks:
@@ -164,6 +172,7 @@ repos:
         types: [python]
         stages: [pre-commit]
 
+  ## QGIS Plugin Security checks
   - repo: local
     hooks:
       - id: bearer-plugin
