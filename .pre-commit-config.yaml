@@ -2,6 +2,7 @@
 # See https://pre-commit.com/hooks.html for more hooks
 ---
 repos:
+  # out-of-the-box hooks for pre-commit
   - repo: local
     hooks:
       - id: end-of-file-fixer
@@ -39,6 +40,7 @@ repos:
         language: system
         types: [json]
 
+  # Other hooks
   - repo: local
     hooks:
       - id: yamllint
@@ -61,12 +63,31 @@ repos:
 
   - repo: local
     hooks:
+      - id: markdownlint
+        name: "📝 markdownlint - Markdown linter"
+        entry: markdownlint
+        args: ["--config", ".config/.markdownlint.yaml", "--fix"]
+        language: system
+        types: [markdown]
+        stages: [pre-commit]
+
+  - repo: local
+    hooks:
+      - id: cspell
+        name: "🔤 cspell - Spell checker for Markdown"
+        entry: cspell
+        args: ["--config=.config/.cspell.json", "--no-progress", "--no-summary"]
+        language: system
+        types: [markdown]
+        stages: [pre-commit]
+
+  - repo: local
+    hooks:
       - id: black
         name: "🖤 black"
         entry: black
         language: system
         types: [python]
-
 
   - repo: local
     hooks:
@@ -112,24 +133,6 @@ repos:
         language: system
         args: ["--"]
         types: [nix]
-
-  - repo: local
-    hooks:
-      - id: markdownlint
-        name: "📝 markdownlint - Markdown linter"
-        entry: markdownlint
-        language: system
-        types: [markdown]
-        stages: [pre-commit]
-
-  - repo: local
-    hooks:
-      - id: cspell
-        name: "🔤 cspell - Spell checker for Markdown"
-        entry: cspell --config=.cspell.json --no-progress --no-summary
-        language: system
-        types: [markdown]
-        stages: [pre-commit]
 
   - repo: local
     hooks:
