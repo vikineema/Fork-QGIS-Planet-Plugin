@@ -6,8 +6,8 @@ echo "--------------------------------"
 echo "Do you want to enable debug mode?"
 choice=$(gum choose "🪲 Yes" "🐞 No")
 case $choice in
-"🪲 Yes") developer_mode=1 ;;
-"🐞 No") developer_mode=0 ;;
+  "🪲 Yes") developer_mode=1 ;;
+  "🐞 No") developer_mode=0 ;;
 esac
 
 echo "Do you want to enable experimental features?"
@@ -28,9 +28,9 @@ rm -f "$PLANET_LOG"
 # Both PLANET_* and PLANET_* env vars are set for backward compatibility
 # QT_QPA_PLATFORM flag forces it to run under x11 protocol
 PLANET_DEBUG="${developer_mode}" \
-PLANET_EXPERIMENTAL="${PLANET_EXPERIMENTAL}" \
-PLANET_TEST_DIR="${PLANET_TEST_DIR}" \
-PLANET_LOG="${PLANET_LOG}" \
-RUNNING_ON_LOCAL=1 \
-QT_QPA_PLATFORM=xcb \
-nix run .#qgis-ltr -- --profile PLANET
+  PLANET_EXPERIMENTAL="${PLANET_EXPERIMENTAL}" \
+  PLANET_TEST_DIR="${PLANET_TEST_DIR}" \
+  PLANET_LOG="${PLANET_LOG}" \
+  RUNNING_ON_LOCAL=1 \
+  QT_QPA_PLATFORM=xcb \
+  nix run .#qgis-ltr -- --profile PLANET

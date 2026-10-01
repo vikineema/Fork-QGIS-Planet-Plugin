@@ -20,6 +20,6 @@ fi
 
 echo "Running flake8 with enabled rules: $CODES"
 flake8 --select="$CODES" \
-    --max-complexity=10 \
-    --exclude="planet_explorer/extlibs/*" \
-    planet_explorer/
+  --max-complexity=10 \
+  --exclude="planet_explorer/extlibs/*" \
+  planet_explorer/

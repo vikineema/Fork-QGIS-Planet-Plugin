@@ -20,5 +20,5 @@ fi
 
 echo "Running bandit with enabled rules: $CODES"
 bandit --tests "$CODES" \
-    --exclude "planet_explorer/extlibs/*" \
-    -r planet_explorer/
+  --exclude "planet_explorer/extlibs/*" \
+  -r planet_explorer/

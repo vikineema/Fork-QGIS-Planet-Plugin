@@ -10,7 +10,7 @@ print(','.join(disabled), ' '.join(f'--disable-plugin {code}' for code in disabl
 ")
 
 # Convert to array to avoid word splitting warning
-read -ra DISABLE_ARGS <<< "$DISABLE_ARGS_STR"
+read -ra DISABLE_ARGS <<<"$DISABLE_ARGS_STR"
 
 echo "Running detect-secrets with plugins disabled: $DISABLED_LIST"
 # Updates baseline

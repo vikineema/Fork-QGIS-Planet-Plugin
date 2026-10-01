@@ -83,6 +83,46 @@ repos:
 
   - repo: local
     hooks:
+      - id: nixfmt
+        name: "❄️ Nixfmt (RFC style)"
+        description: Format Nix code with nixfmt-rfc-style
+        entry: nixfmt
+        language: system
+        args: ["--"]
+        types: [nix]
+
+  - repo: local
+    hooks:
+      - id: shfmt-scripts
+        name: "🐚 Format shell scripts"
+        entry: shfmt
+        args: ["-w"]
+        language: system
+        files: ^scripts/.*\.(sh|bash)$
+        pass_filenames: true
+
+  - repo: local
+    hooks:
+      - id: shellcheck-scripts
+        name: "🐚 ShellCheck - scripts"
+        entry: shellcheck
+        language: system
+        files: ^scripts/.*\.(sh|bash)$
+        pass_filenames: true
+
+  - repo: local
+    hooks:
+      - id: actionlint
+        name: "🤖 actionlint - GitHub Actions workflow linter"
+        entry: actionlint
+        language: system
+        types: [yaml]
+        files: ^\.github/workflows/.*\.ya?ml$
+        stages: [pre-commit]
+
+
+  - repo: local
+    hooks:
       - id: black
         name: "🖤 black"
         entry: black
@@ -123,35 +163,6 @@ repos:
         language: system
         types: [python]
         stages: [pre-commit]
-
-  - repo: local
-    hooks:
-      - id: nixfmt
-        name: "❄️ Nixfmt (RFC style)"
-        description: Format Nix code with nixfmt-rfc-style
-        entry: nixfmt
-        language: system
-        args: ["--"]
-        types: [nix]
-
-  - repo: local
-    hooks:
-      - id: actionlint
-        name: "🤖 actionlint - GitHub Actions workflow linter"
-        entry: actionlint
-        language: system
-        types: [yaml]
-        files: ^\.github/workflows/.*\.ya?ml$
-        stages: [pre-commit]
-
-  - repo: local
-    hooks:
-      - id: shellcheck-scripts
-        name: "🐚 ShellCheck - scripts"
-        entry: shellcheck
-        language: system
-        files: ^scripts/.*\.(sh|bash|zsh)$
-        pass_filenames: true
 
   - repo: local
     hooks:

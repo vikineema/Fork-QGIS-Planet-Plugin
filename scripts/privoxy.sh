@@ -251,11 +251,11 @@ show_help() {
 }
 
 case "$CMD" in
-start)
-  check_privoxy || exit 1
-  generate_ca
-  if [ ! -f "$PRIVOXY_CONFIG_FILE" ]; then
-    cat >"$PRIVOXY_CONFIG_FILE" <<EOF
+  start)
+    check_privoxy || exit 1
+    generate_ca
+    if [ ! -f "$PRIVOXY_CONFIG_FILE" ]; then
+      cat >"$PRIVOXY_CONFIG_FILE" <<EOF
 listen-address  0.0.0.0:8123
 logdir $PRIVOXY_CACHE_DIR
 confdir $PRIVOXY_CACHE_DIR
@@ -265,59 +265,59 @@ logfile privoxy.log
 debug   1
 debug   1024
 EOF
-  fi
-  open_firewall
-  if [ ! -f "$PRIVOXY_PID_FILE" ] || ! kill -0 "$(cat "$PRIVOXY_PID_FILE")" 2>/dev/null; then
-    privoxy --pidfile "$PRIVOXY_PID_FILE" "$PRIVOXY_CONFIG_FILE" &
-    echo $! >"$PRIVOXY_PID_FILE"
-    echo "Started privoxy proxy with HTTPS support on 0.0.0.0:8123 (logdir: $PRIVOXY_CACHE_DIR)"
-  else
-    echo "Privoxy already running (PID: $(cat "$PRIVOXY_PID_FILE"))"
-  fi
-  generate_pac
-  start_pac_server
-  echo ""
-  echo "📋 To follow logs: $0 logs"
-  ;;
-stop)
-  if [ -f "$PRIVOXY_PID_FILE" ]; then
-    kill "$(cat "$PRIVOXY_PID_FILE")" && rm -f "$PRIVOXY_PID_FILE"
-    echo "Stopped privoxy."
-  else
-    echo "Privoxy is not running."
-  fi
-  stop_pac_server
-  close_firewall
-  ;;
-restart)
-  "$0" stop
-  sleep 1
-  "$0" start
-  ;;
-status)
-  if [ -f "$PRIVOXY_PID_FILE" ] && kill -0 "$(cat "$PRIVOXY_PID_FILE")" 2>/dev/null; then
-    echo "Privoxy is running (PID: $(cat "$PRIVOXY_PID_FILE"))"
-  else
-    echo "Privoxy is not running."
-  fi
-  ;;
-generate-ca)
-  generate_ca
-  ;;
-logs)
-  show_logs
-  ;;
-testpac-local)
-  test_pac_local
-  ;;
-testpac-vlan)
-  test_pac_vlan
-  ;;
-help | --help | -h)
-  show_help
-  ;;
-*)
-  show_help
-  exit 1
-  ;;
+    fi
+    open_firewall
+    if [ ! -f "$PRIVOXY_PID_FILE" ] || ! kill -0 "$(cat "$PRIVOXY_PID_FILE")" 2>/dev/null; then
+      privoxy --pidfile "$PRIVOXY_PID_FILE" "$PRIVOXY_CONFIG_FILE" &
+      echo $! >"$PRIVOXY_PID_FILE"
+      echo "Started privoxy proxy with HTTPS support on 0.0.0.0:8123 (logdir: $PRIVOXY_CACHE_DIR)"
+    else
+      echo "Privoxy already running (PID: $(cat "$PRIVOXY_PID_FILE"))"
+    fi
+    generate_pac
+    start_pac_server
+    echo ""
+    echo "📋 To follow logs: $0 logs"
+    ;;
+  stop)
+    if [ -f "$PRIVOXY_PID_FILE" ]; then
+      kill "$(cat "$PRIVOXY_PID_FILE")" && rm -f "$PRIVOXY_PID_FILE"
+      echo "Stopped privoxy."
+    else
+      echo "Privoxy is not running."
+    fi
+    stop_pac_server
+    close_firewall
+    ;;
+  restart)
+    "$0" stop
+    sleep 1
+    "$0" start
+    ;;
+  status)
+    if [ -f "$PRIVOXY_PID_FILE" ] && kill -0 "$(cat "$PRIVOXY_PID_FILE")" 2>/dev/null; then
+      echo "Privoxy is running (PID: $(cat "$PRIVOXY_PID_FILE"))"
+    else
+      echo "Privoxy is not running."
+    fi
+    ;;
+  generate-ca)
+    generate_ca
+    ;;
+  logs)
+    show_logs
+    ;;
+  testpac-local)
+    test_pac_local
+    ;;
+  testpac-vlan)
+    test_pac_vlan
+    ;;
+  help | --help | -h)
+    show_help
+    ;;
+  *)
+    show_help
+    exit 1
+    ;;
 esac
