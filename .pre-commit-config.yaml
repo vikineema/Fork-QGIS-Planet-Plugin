@@ -51,8 +51,6 @@ repos:
         types: [yaml]
         stages: [pre-commit]
 
-  - repo: local
-    hooks:
       - id: remove-core-file
         name: "🗑️ Remove core file if it exists"
         entry: fd -H -t f -d 1 -I '^core(\.[0-9]+)?$' -X rm -f
@@ -61,8 +59,6 @@ repos:
         always_run: true
         pass_filenames: false
 
-  - repo: local
-    hooks:
       - id: markdownlint
         name: "📝 markdownlint - Markdown linter"
         entry: markdownlint
@@ -71,8 +67,6 @@ repos:
         types: [markdown]
         stages: [pre-commit]
 
-  - repo: local
-    hooks:
       - id: cspell
         name: "🔤 cspell - Spell checker for Markdown"
         entry: cspell
@@ -81,8 +75,6 @@ repos:
         types: [markdown]
         stages: [pre-commit]
 
-  - repo: local
-    hooks:
       - id: nixfmt
         name: "❄️ Nixfmt (RFC style)"
         description: Format Nix code with nixfmt-rfc-style
@@ -91,8 +83,6 @@ repos:
         args: ["--"]
         types: [nix]
 
-  - repo: local
-    hooks:
       - id: shfmt-scripts
         name: "🐚 Format shell scripts"
         entry: shfmt
@@ -101,8 +91,6 @@ repos:
         files: ^scripts/.*\.(sh|bash)$
         pass_filenames: true
 
-  - repo: local
-    hooks:
       - id: shellcheck-scripts
         name: "🐚 ShellCheck - scripts"
         entry: shellcheck
@@ -110,8 +98,6 @@ repos:
         files: ^scripts/.*\.(sh|bash)$
         pass_filenames: true
 
-  - repo: local
-    hooks:
       - id: actionlint
         name: "🤖 actionlint - GitHub Actions workflow linter"
         entry: actionlint
@@ -120,14 +106,26 @@ repos:
         files: ^\.github/workflows/.*\.ya?ml$
         stages: [pre-commit]
 
-  - repo: local
-    hooks:
       - id: taplo-fmt
         name: "🧵 Format and lint TOML files using taplo"
         entry: taplo fmt
         args: ["--config", ".config/.taplo.toml"]
         language: system
         types: [toml]
+
+      - id: mbake-format
+        name: "🧰 Format Makefiles"
+        entry: mbake format
+        args: ["--config", ".config/.bake.toml"]
+        language: system
+        types: [makefile]
+
+      - id: mbake-validate
+        name: "🔍 Validate Makefiles"
+        entry: mbake validate
+        args: ["--config", ".config/.bake.toml"]
+        language: system
+        types: [makefile]
 
   - repo: local
     hooks:
