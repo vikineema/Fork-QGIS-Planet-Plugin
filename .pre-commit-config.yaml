@@ -127,6 +127,7 @@ repos:
         language: system
         types: [makefile]
 
+  # Python code hooks
   - repo: local
     hooks:
       - id: black
@@ -135,40 +136,35 @@ repos:
         language: system
         types: [python]
 
-  - repo: local
-    hooks:
-      - id: ensure-utf8-encoding
-        name: "🌐 Ensure UTF-8 encoding declaration in Python files"
-        entry: bash scripts/encoding_check.sh
+      - id: isort
+        name: "📦 isort - sort Python imports"
+        entry: isort
+        args: ["--settings-path=.config/.isort.cfg"]
         language: system
         types: [python]
         stages: [pre-commit]
 
-  - repo: local
-    hooks:
-      - id: ensure-google-docstrings
-        name: "📚 Ensure Google-style docstrings in Python modules"
-        entry: bash scripts/docstrings_check.sh
-        language: system
-        types: [python]
-        stages: [pre-commit]
-
-  - repo: local
-    hooks:
       - id: flake8
         name: " flake8 Python Linter"
         entry: bash scripts/flake8_check.sh
         language: system
         pass_filenames: false
 
-  - repo: local
-    hooks:
-      - id: isort
-        name: "📦 isort - sort Python imports"
-        entry: isort --check --diff
+      - id: ensure-utf8-encoding
+        name: "🌐 Ensure UTF-8 encoding declaration in Python files"
+        entry: bash scripts/encoding_check.sh
         language: system
         types: [python]
         stages: [pre-commit]
+        pass_filenames: false
+
+      - id: ensure-google-docstrings
+        name: "📚 Ensure Google-style docstrings in Python modules"
+        entry: bash scripts/docstrings_check.sh
+        language: system
+        types: [python]
+        stages: [pre-commit]
+        pass_filenames: false
 
   ## QGIS Plugin Security checks
   - repo: local
@@ -179,8 +175,6 @@ repos:
         language: system
         pass_filenames: false
 
-  - repo: local
-    hooks:
       - id: bandit
         name: "🔒 Bandit - Python security analysis"
         entry: bash scripts/bandit_check.sh
@@ -188,22 +182,18 @@ repos:
         pass_filenames: false
         stages: [pre-commit]
 
-  - repo: local
-    hooks:
+      - id: detect-secrets
+        name: "🔒 Detect Secrets"
+        entry: bash scripts/detect_secrets.sh
+        pass_filenames: false
+        language: system
+
       - id: filecheck
         name: "📂 File Check - File analysis"
         entry: bash scripts/file_analysis.sh
         language: system
         pass_filenames: false
         stages: [pre-commit]
-
-  - repo: local
-    hooks:
-      - id: detect-secrets
-        name: "🔒 Detect Secrets"
-        entry: bash scripts/detect_secrets.sh
-        pass_filenames: false
-        language: system
 
     # - repo: local
     #   hooks:
