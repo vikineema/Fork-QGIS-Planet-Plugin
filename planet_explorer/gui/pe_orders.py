@@ -569,7 +569,7 @@ class PlanetOrderReviewWidget(QWidget):
             )
             self.chkClip = QCheckBox("Clip items to AOI")
             enabled = QSettings().value(
-                f"{SETTINGS_NAMESPACE}/{ENABLE_CLIP_SETTING}", False
+                f"{SETTINGS_NAMESPACE}/{ENABLE_CLIP_SETTING}", True
             )
             self.chkClip.setChecked(str(enabled).lower() == str(True).lower())
             self.chkClip.stateChanged.connect(self.checkStateChanged)
