@@ -14,6 +14,7 @@
 *                                                                         *
 ***************************************************************************
 """
+
 import json
 import os
 from urllib.parse import parse_qs, quote, unquote, urlencode, urlparse, urlunparse
@@ -268,6 +269,8 @@ class BasemapRenderingOptionsWidget(QFrame):
         if self.datatype == "uint16":
             return ["rgb", "cir", "ndvi", "mtvi2", "ndwi", "msavi2", "tgi", "vari"]
         else:
+            # TODO: Delete this line this is just for checking
+            print(f"Mosaic data type: {self.datatype}")
             return []
 
     def can_use_indices(self):
