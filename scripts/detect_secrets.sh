@@ -16,8 +16,8 @@ cd "$repo_root_dir"
 mapfile -t FILES < <(git ls-files -- planet_explorer/ ':(exclude)planet_explorer/extlibs' ":(exclude)$baseline_rel_path")
 
 detect-secrets-hook --verbose \
-  --json \
-  --baseline "$baseline_rel_path" \
-  --no-verify \
-  --exclude-files '^planet_explorer/(extlibs/|\.secrets\.baseline$)' \
-  "${DISABLE_ARGS[@]}" "${FILES[@]}"
+    --json \
+    --baseline "$baseline_rel_path" \
+    --no-verify \
+    --exclude-files '^planet_explorer/(extlibs/|\.secrets\.baseline$)' \
+    "${DISABLE_ARGS[@]}" "${FILES[@]}"
