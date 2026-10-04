@@ -18,7 +18,7 @@ case "$choice" in
 esac
 
 # Running on local used to skip tests that will not work in a local dev env
-PLANET_LOG=$HOME/PLANET2.log
+PLANET_LOG=$LOGS_DIR/PLANET2.log
 PLANET_TEST_DIR="$(pwd)/test" # Set test directory relative to project root
 
 rm -f "$PLANET_LOG"

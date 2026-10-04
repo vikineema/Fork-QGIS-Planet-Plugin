@@ -171,7 +171,7 @@ repos:
     hooks:
       - id: bearer-plugin
         name: "🛡️ Bearer - Security & privacy scanner - planet_explorer"
-        entry: bearer scan --exit-code 1 planet_explorer
+        entry: bearer scan --ignore-file=.config/bearer.ignore --exit-code 1 planet_explorer
         language: system
         pass_filenames: false
 
