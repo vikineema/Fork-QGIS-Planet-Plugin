@@ -34,7 +34,7 @@ if [ "$qgis_version_major" -ge 4 ]; then
     export PYQT6_PATH="$QGIS_PREFIX_PATH/share/qgis/python/PyQt"
 fi
 
-export QT_QPA_PLATFORM=offscreen
+#export QT_QPA_PLATFORM=offscreen
 
 echo "✅ QGIS env variables setup complete."
 echo ""

@@ -32,5 +32,4 @@ PLANET_DEBUG="${developer_mode}" \
     PLANET_TEST_DIR="${PLANET_TEST_DIR}" \
     PLANET_LOG="${PLANET_LOG}" \
     RUNNING_ON_LOCAL=1 \
-    QT_QPA_PLATFORM=xcb \
     nix run .#qgis-ltr -- --profile PLANET
