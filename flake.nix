@@ -71,6 +71,8 @@
       qgisPlanetDeps = with pkgs; [
         pipewire
         privoxy
+        pythonPkgs.httpx
+        pythonPkgs.paver
       ];
       qgisPluginsSecurity = with pkgs; [
         bandit
