@@ -14,8 +14,9 @@ set -euo pipefail
 VSCODE_PROFILE="PLANET"
 VSCODE_USER_DIR="$REPO_ROOT_DIR/.vscode"
 VSCODE_EXT_DIR="$REPO_ROOT_DIR/.vscode-extensions"
-EXTENSIONS_FILE="$CONFIG_DIR/vscode/vscode-extensions.txt"
+EXTENSIONS_FILE="$CONFIG_DIR/vscode/extensions.json"
 SETTINGS_FILE="$CONFIG_DIR/vscode/settings.json"
+VSCODE_SETTINGS_FILE="$VSCODE_USER_DIR/settings.json"
 LOG_FILE="$LOGS_DIR/vscode.log"
 
 # ----------------------------------------------
@@ -38,11 +39,16 @@ list_installed_extensions() {
         if [[ -f "$pkg" ]]; then
             name=$(jq -r '.name' <"$pkg")
             publisher=$(jq -r '.publisher' <"$pkg")
-            #version=$(jq -r '.version' <"$pkg")
-            #echo "${publisher}.${name}@${version}"
-            echo "${publisher}.${name}"
+            echo "${publisher}.${name}" | tr '[:upper:]' '[:lower:]'
         fi
     done
+}
+
+read_recommended_extensions() {
+    # Strip whole-line // comments (JSONC), extract recommendations, lowercase.
+    sed -E 's#^[[:space:]]*//.*$##' "$EXTENSIONS_FILE" \
+        | jq -r '.recommendations[]' \
+        | tr '[:upper:]' '[:lower:]'
 }
 
 install_required_extensions() {
@@ -57,10 +63,7 @@ install_required_extensions() {
     installed_exts="$(list_installed_extensions)"
 
     while IFS= read -r ext || [[ -n "$ext" ]]; do
-        # trim whitespace
-        ext="$(echo "$ext" | xargs)"
-        # skip comments/empty lines
-        [[ -z "$ext" || "$ext" =~ ^# ]] && continue
+        [[ -z "$ext" ]] && continue
 
         if echo "$installed_exts" | grep -qx "$ext"; then
             echo "  ✅ Extension ${ext} already installed."
@@ -79,7 +82,7 @@ install_required_extensions() {
                 exit 1
             fi
         fi
-    done <"$EXTENSIONS_FILE"
+    done < <(read_recommended_extensions)
 }
 
 clean() {
@@ -145,28 +148,6 @@ done
 echo "🗨️ Truncating $LOG_FILE..."
 : >"$LOG_FILE"
 
-# Locate QGIS binary
-QGIS_BIN=$(which qgis)
-
-if [[ -z "$QGIS_BIN" ]]; then
-    echo "Error: QGIS binary not found!"
-    exit 1
-fi
-
-# Extract the Nix store path (removing /bin/qgis)
-QGIS_PREFIX=$(dirname "$(dirname "$QGIS_BIN")")
-
-# Construct the correct QGIS Python path
-QGIS_PYTHON_PATH="$QGIS_PREFIX/share/qgis/python"
-# Needed for qgis processing module import
-# PROCESSING_PATH="$QGIS_PREFIX/share/qgis/python/qgis"
-
-# Check if the Python directory exists
-if [[ ! -d "$QGIS_PYTHON_PATH" ]]; then
-    echo "Error: QGIS Python path not found at $QGIS_PYTHON_PATH"
-    exit 1
-fi
-
 echo "🗨️ Checking VSCode is installed ..."
 if ! command -v code &>/dev/null; then
     echo "  ❌ 'code' CLI not found. Please install VSCode and add 'code' to your PATH."
@@ -196,8 +177,6 @@ install_required_extensions
 
 echo "🗨️ Launching VSCode..."
 launch_vscode .
-
-VSCODE_SETTINGS_FILE="$VSCODE_USER_DIR/settings.json"
 
 echo "🗨️ Checking if $VSCODE_SETTINGS_FILE exists..."
 

@@ -30,19 +30,19 @@ repos:
         entry: check-json
         language: system
         types: [json]
-        exclude: ^(planet_explorer/planet_api/request-result-samples/)
-
-      - id: pretty-format-json
-        name: "🧾 Format JSON files"
-        entry: pretty-format-json
-        args: ["--autofix"]
-        exclude: ^(planet_explorer/planet_api/request-result-samples/)
-        language: system
-        types: [json]
+        exclude: ^(planet_explorer/planet_api/request-result-samples/|\.config/vscode)
 
   # Other hooks
   - repo: local
     hooks:
+      - id: prettier-json
+        name: "🧾 Format JSON & JSONC files (Prettier)"
+        entry: prettier
+        args: ["--write", "--config", ".config/.prettierrc"]
+        exclude: ^(planet_explorer/planet_api/request-result-samples/)
+        language: system
+        files: \.(json|jsonc)$
+
       - id: yamllint
         name: "🔍 yamllint - YAML linter"
         entry: yamllint

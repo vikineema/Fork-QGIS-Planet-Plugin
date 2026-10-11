@@ -1,9 +1,6 @@
 {
   "$schema": "https://raw.githubusercontent.com/streetsidesoftware/cspell/main/cspell.schema.json",
-  "files": [
-    "**/*.md",
-    "**/{*,.*}/**/*.md"
-  ],
+  "files": ["**/*.md", "**/{*,.*}/**/*.md"],
   "language": "en-GB",
   "useGitignore": true,
   "version": "0.2",
