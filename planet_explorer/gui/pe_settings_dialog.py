@@ -25,6 +25,7 @@ __revision__ = "$Format:%H$"
 import json
 import os
 
+from planet_explorer.pe_utils import SETTINGS_NAMESPACE, iface, log
 from qgis.core import QgsMapLayerProxyModel
 from qgis.gui import QgsMapLayerComboBox
 from qgis.PyQt.QtCore import QSettings, Qt
@@ -42,8 +43,6 @@ from qgis.PyQt.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
-
-from planet_explorer.pe_utils import SETTINGS_NAMESPACE, iface, log
 
 BOOL = "bool"
 STRING = "string"

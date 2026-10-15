@@ -24,6 +24,7 @@ __copyright__ = "(C) 2019 Planet Inc, https://planet.com"
 __revision__ = "$Format:%H$"
 
 
+from planet_explorer.pe_utils import ITEM_BACKGROUND_COLOR, iface
 from qgis.core import QgsApplication
 from qgis.PyQt.QtCore import QSize, Qt, pyqtSignal
 from qgis.PyQt.QtGui import QIcon, QImage, QPalette, QPixmap
@@ -39,17 +40,15 @@ from qgis.PyQt.QtWidgets import (
     QWidget,
 )
 
-from planet_explorer.pe_utils import ITEM_BACKGROUND_COLOR, iface
-
 from ..pe_utils import (
     FIRST_ACQUIRED,
     LINKS,
     NAME,
     TILES,
     add_menu_section_action,
+    get_api_key_from_mosaic_tile_url,
     mosaic_title,
     qgsrectangle_for_canvas_from_4326_bbox_coords,
-    get_api_key_from_mosaic_tile_url
 )
 from .pe_thumbnails import download_thumbnail
 
@@ -196,7 +195,8 @@ class BasemapItemWidget(QWidget):
             api_key = get_api_key_from_mosaic_tile_url(mosaic[LINKS]["tiles"])
             if api_key is not None:
                 THUMBNAIL_DEFAULT_URL = (
-                    "https://tiles.planet.com/basemaps/v1/planet-tiles/" "{name}/thumb?api_key={api_key}"
+                    "https://tiles.planet.com/basemaps/v1/planet-tiles/"
+                    "{name}/thumb?api_key={api_key}"
                 )
                 download_thumbnail(
                     THUMBNAIL_DEFAULT_URL.format(name=mosaic[NAME], api_key=api_key),

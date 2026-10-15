@@ -268,7 +268,7 @@ class BasemapRenderingOptionsWidget(QFrame):
     def processes_for_datatype(self):
         if self.datatype == "uint16":
             return ["rgb", "cir", "ndvi", "mtvi2", "ndwi", "msavi2", "tgi", "vari"]
-        else:            
+        else:
             return []
 
     def can_use_indices(self):

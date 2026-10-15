@@ -33,34 +33,6 @@ import analytics
 import planet
 import sentry_sdk
 import urllib3
-from qgis.core import Qgis, QgsProject
-from qgis.gui import QgsGui
-from qgis.PyQt.QtCore import (
-    QCoreApplication,
-    QLocale,
-    QSettings,
-    QSize,
-    Qt,
-    QTimer,
-    QTranslator,
-    QUrl,
-)
-from qgis.PyQt.QtGui import QDesktopServices, QIcon, QPalette
-from qgis.PyQt.QtWidgets import (
-    QAction,
-    QDialog,
-    QHBoxLayout,
-    QLabel,
-    QMenu,
-    QMessageBox,
-    QPushButton,
-    QSizePolicy,
-    QTextBrowser,
-    QToolButton,
-    QWidget,
-)
-from requests import exceptions
-
 from planet_explorer.gui.pe_auth_dialog import PlanetAuthenticationDialog
 from planet_explorer.gui.pe_basemap_layer_widget import BasemapLayerWidgetProvider
 from planet_explorer.gui.pe_explorer_dockwidget import (
@@ -105,6 +77,33 @@ from planet_explorer.planet_api import PlanetClient
 
 # Initialize Qt resources from file resources.py
 from planet_explorer.resources import resources  # noqa: F401
+from qgis.core import Qgis, QgsProject
+from qgis.gui import QgsGui
+from qgis.PyQt.QtCore import (
+    QCoreApplication,
+    QLocale,
+    QSettings,
+    QSize,
+    Qt,
+    QTimer,
+    QTranslator,
+    QUrl,
+)
+from qgis.PyQt.QtGui import QDesktopServices, QIcon, QPalette
+from qgis.PyQt.QtWidgets import (
+    QAction,
+    QDialog,
+    QHBoxLayout,
+    QLabel,
+    QMenu,
+    QMessageBox,
+    QPushButton,
+    QSizePolicy,
+    QTextBrowser,
+    QToolButton,
+    QWidget,
+)
+from requests import exceptions
 
 PLANET_COM = "https://planet.com"
 SAT_SPECS_PDF = (

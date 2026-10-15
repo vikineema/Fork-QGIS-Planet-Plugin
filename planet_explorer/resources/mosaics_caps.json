@@ -109,46 +109,22 @@
       "icon": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAAABCAIAAADhDz9AAAAAR0lEQVR4nI2KsQ3AQAwC+f23yXgGTArHKVJFQugOcZIrKpjwNKGFWT5qRo3/cac6nCRsvFy9mj00GAkWrGPDgh44FmxoYZYb7B6N6tgwdDUAAAAASUVORK5CYII="
     }
   },
-  "formats": [
-    "tiff",
-    "png8",
-    "jpeg",
-    "geotiff",
-    "webp",
-    "npy",
-    "png"
-  ],
+  "formats": ["tiff", "png8", "jpeg", "geotiff", "webp", "npy", "png"],
   "indices": {
     "msavi2": {
-      "bands": [
-        "nir",
-        "r"
-      ],
+      "bands": ["nir", "r"],
       "color": "b2w",
       "pref-colors": [],
-      "range": [
-        -1.0,
-        1.0
-      ]
+      "range": [-1.0, 1.0]
     },
     "mtvi2": {
-      "bands": [
-        "r",
-        "g",
-        "nir"
-      ],
+      "bands": ["r", "g", "nir"],
       "color": "r2g",
       "pref-colors": [],
-      "range": [
-        -1.0,
-        1.0
-      ]
+      "range": [-1.0, 1.0]
     },
     "ndvi": {
-      "bands": [
-        "r",
-        "nir"
-      ],
+      "bands": ["r", "nir"],
       "color": "viridis",
       "pref-colors": [
         "viridis",
@@ -159,55 +135,25 @@
         "greens",
         "rdylgn"
       ],
-      "range": [
-        -1.0,
-        1.0
-      ]
+      "range": [-1.0, 1.0]
     },
     "ndwi": {
-      "bands": [
-        "g",
-        "nir"
-      ],
+      "bands": ["g", "nir"],
       "color": "brbg",
-      "pref-colors": [
-        "brbg",
-        "rdbu",
-        "rdgy",
-        "inferno",
-        "piyg",
-        "puor"
-      ],
-      "range": [
-        -1.0,
-        1.0
-      ]
+      "pref-colors": ["brbg", "rdbu", "rdgy", "inferno", "piyg", "puor"],
+      "range": [-1.0, 1.0]
     },
     "tgi": {
-      "bands": [
-        "r",
-        "g",
-        "b"
-      ],
+      "bands": ["r", "g", "b"],
       "color": "r2g",
       "pref-colors": [],
-      "range": [
-        -1.0,
-        1.0
-      ]
+      "range": [-1.0, 1.0]
     },
     "vari": {
-      "bands": [
-        "r",
-        "g",
-        "b"
-      ],
+      "bands": ["r", "g", "b"],
       "color": "r2g",
       "pref-colors": [],
-      "range": [
-        -1.0,
-        1.0
-      ]
+      "range": [-1.0, 1.0]
     }
   }
 }

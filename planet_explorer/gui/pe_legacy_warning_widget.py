@@ -1,10 +1,10 @@
+# -*- coding: utf-8 -*-
 import os
 
+from planet_explorer.pe_utils import PLANET_COLOR, open_link_with_browser
 from qgis.PyQt import uic
 from qgis.PyQt.QtCore import pyqtSignal
 from qgis.PyQt.QtGui import QPalette
-
-from planet_explorer.pe_utils import PLANET_COLOR, open_link_with_browser
 
 WIDGET, BASE = uic.loadUiType(
     os.path.join(

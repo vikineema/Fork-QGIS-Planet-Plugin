@@ -35,8 +35,8 @@ from typing import (
     TypeVar,
 )
 from urllib.parse import parse_qs, quote, urlencode, urlparse, urlunparse
-import httpx
 
+import httpx
 import requests
 from planet import Auth, PlanetOAuthScopes, Session
 from planet.exceptions import InvalidAPIKey, InvalidIdentity
@@ -1281,7 +1281,14 @@ class PlanetClient(QObject):
 
     @staticmethod
     def fetch_image_using_api_key(image_url: str) -> bytes | None:
-        """Fetch image bytes from a URL that already carries an api_key."""
+        """Fetch image bytes from a URL that already carries an api_key.
+
+        Args:
+            image_url: URL of the image to download.
+
+        Returns:
+            bytes | None The downloaded image data (bytes), or None if the request fails.
+        """
         try:
             response = httpx.get(image_url, follow_redirects=True, timeout=30)
             response.raise_for_status()
