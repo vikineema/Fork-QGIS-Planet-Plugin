@@ -268,9 +268,7 @@ class BasemapRenderingOptionsWidget(QFrame):
     def processes_for_datatype(self):
         if self.datatype == "uint16":
             return ["rgb", "cir", "ndvi", "mtvi2", "ndwi", "msavi2", "tgi", "vari"]
-        else:
-            # TODO: Delete this line this is just for checking
-            print(f"Mosaic data type: {self.datatype}")
+        else:            
             return []
 
     def can_use_indices(self):
@@ -430,7 +428,7 @@ class BasemapLayerWidget(QWidget):
             )
 
             self.labelWarning.setVisible(missing_auth)
-            self.renderingOptionsWidget.setVisible(missing_auth)
+            self.renderingOptionsWidget.setVisible(not missing_auth)
 
             tile_url = self._resolve_tile_url(client, missing_auth)
 
