@@ -49,6 +49,7 @@ from ..pe_utils import (
     add_menu_section_action,
     mosaic_title,
     qgsrectangle_for_canvas_from_4326_bbox_coords,
+    get_api_key_from_mosaic_tile_url
 )
 from .pe_thumbnails import download_thumbnail
 
@@ -190,13 +191,25 @@ class BasemapItemWidget(QWidget):
         if THUMB in mosaic[LINKS]:
             download_thumbnail(mosaic[LINKS][THUMB], self)
         else:
-            THUMBNAIL_DEFAULT_URL = (
-                "https://tiles.planet.com/basemaps/v1/planet-tiles/" "{name}/thumb"
-            )
-            download_thumbnail(
-                THUMBNAIL_DEFAULT_URL.format(name=mosaic[NAME]),
-                self,
-            )
+            # TODO: Remove reference to API key once /thumb endpoints can be authenticated using
+            # OAuth2 token.
+            api_key = get_api_key_from_mosaic_tile_url(mosaic[LINKS]["tiles"])
+            if api_key is not None:
+                THUMBNAIL_DEFAULT_URL = (
+                    "https://tiles.planet.com/basemaps/v1/planet-tiles/" "{name}/thumb?api_key={api_key}"
+                )
+                download_thumbnail(
+                    THUMBNAIL_DEFAULT_URL.format(name=mosaic[NAME], api_key=api_key),
+                    self,
+                )
+            else:
+                THUMBNAIL_DEFAULT_URL = (
+                    "https://tiles.planet.com/basemaps/v1/planet-tiles/" "{name}/thumb"
+                )
+                download_thumbnail(
+                    THUMBNAIL_DEFAULT_URL.format(name=mosaic[NAME]),
+                    self,
+                )
 
     def set_thumbnail(self, img):
         pixmap = QPixmap(img)

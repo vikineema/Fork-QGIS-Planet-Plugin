@@ -35,6 +35,7 @@ from typing import (
     TypeVar,
 )
 from urllib.parse import parse_qs, quote, urlencode, urlparse, urlunparse
+import httpx
 
 import requests
 from planet import Auth, PlanetOAuthScopes, Session
@@ -1278,8 +1279,26 @@ class PlanetClient(QObject):
         raw_bytes = response.content
         return raw_bytes
 
+    @staticmethod
+    def fetch_image_using_api_key(image_url: str) -> bytes | None:
+        """Fetch image bytes from a URL that already carries an api_key."""
+        try:
+            response = httpx.get(image_url, follow_redirects=True, timeout=30)
+            response.raise_for_status()
+            return response.content
+        except httpx.HTTPStatusError as e:
+            # Don't log the URL or the exception text, both can contain the api key
+            log.error(f"Failed to fetch image: HTTP {e.response.status_code}")
+            return None
+        except httpx.HTTPError as e:
+            log.error(f"Failed to fetch image: {type(e).__name__}")
+            return None
+
     @verify_session
     @verify_async_runner
+    def _get_image_bytes_with_session(self, image_url: str) -> bytes | None:
+        return self.runner.run(self.aget_image_bytes(image_url))
+
     def get_image_bytes(self, image_url: str) -> bytes | None:
         """Fetch raw image bytes from a URL.
 
@@ -1289,7 +1308,11 @@ class PlanetClient(QObject):
         Returns:
             bytes | None: Raw image bytes, or None if the request failed.
         """
-        return self.runner.run(self.aget_image_bytes(image_url))
+        # TODO: remove once /thumb endpoints can be authenticated using OAuth2 token.
+        if "api_key=" in image_url:
+            return self.fetch_image_using_api_key(image_url)
+        else:
+            return self._get_image_bytes_with_session(image_url)
 
     def update_search(self, request: dict[str, Any], search_id: str) -> dict[str, Any]:
         """Update an existing saved search.
