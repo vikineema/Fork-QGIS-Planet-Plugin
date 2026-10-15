@@ -14,8 +14,8 @@ run-pre-commit:
     pre-commit run --all-files
 
 # Create the conda environment
-create-conda-env: 
-    micromamba create -f ./qgis4-conda-forge-env.yaml -y 
+create-conda-env:
+    micromamba create -f ./qgis4-conda-forge-env.yaml -y
 
 # Setup the plugin for use with QGIS4 in a conda environment.
 setup-qgis4:
