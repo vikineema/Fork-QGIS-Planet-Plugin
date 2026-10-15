@@ -24,6 +24,10 @@ __revision__ = "$Format:%H$"
 
 import datetime as dt
 import fnmatch
+
+# Compatibility shim: paver calls inspect.getargspec, which was removed
+# in Python 3.11. This must run before paver launches any tasks.
+import inspect
 import os
 import subprocess  # nosec
 import sys
@@ -35,9 +39,6 @@ from pathlib import Path
 
 import httpx
 
-# Compatibility shim: paver calls inspect.getargspec, which was removed
-# in Python 3.11. This must run before paver launches any tasks.
-import inspect
 if not hasattr(inspect, "getargspec"):
 
     def _getargspec(func):

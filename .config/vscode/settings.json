@@ -7,7 +7,7 @@
   "files.insertFinalNewline": true,
   "files.trimFinalNewlines": true,
   "files.trimTrailingWhitespace": true,
-  "editor.formatOnSave": true,
+  "editor.formatOnSave": false,
   // ── Markdown: markdownlint --fix + cspell ──
   "[markdown]": {
     "editor.defaultFormatter": "DavidAnson.vscode-markdownlint",

@@ -31,8 +31,16 @@ qgis_version=$(qgis --version 2>/dev/null | awk '{print $2}' | cut -d- -f1)
 qgis_version_major=${qgis_version%%.*}
 
 if [ "$qgis_version_major" -ge 4 ]; then
+    # QGIS 4 uses qt6
     export PYQT6_PATH="$QGIS_PREFIX_PATH/share/qgis/python/PyQt"
+    export QGIS_CUSTOM_CONFIG_PATH="$HOME/.local/share/QGIS/QGIS4"
+else
+    export QGIS_CUSTOM_CONFIG_PATH="$HOME/.local/share/QGIS/QGIS3"
 fi
+
+export QGIS_PROFILE_DIR="$QGIS_CUSTOM_CONFIG_PATH/profiles/$QGIS_PROFILE_NAME"
+export QGIS_PLUGINPATH="$QGIS_PROFILE_DIR/python/plugins"
+export QGIS_PLUGIN_DIR="$QGIS_PLUGINPATH"
 
 #export QT_QPA_PLATFORM=offscreen
 

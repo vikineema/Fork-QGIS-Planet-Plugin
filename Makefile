@@ -16,7 +16,7 @@ help: ## Show this help message
 # Targets with '##' comments will automatically appear in 'make help'
 # ------------------------------------------------------------------------------
 
-## Cross service targets
+## Linting and security checks
 
 activate-env: ## Enter the pyqgis4-qt6 dev shell
 	@-nix develop .#pyqgis4-qt6
@@ -36,10 +36,10 @@ yaml-lint: ## Lint YAML files
 
 json-lint-fix: ## JSON checks and formatting only
 	@pre-commit run check-json --all-files
-	@pre-commit run pretty-format-json --all-files
+	@pre-commit run prettier-json --all-files
 
-rm-core: ## Remove core files
-	@pre-commit run remove-core-file --all-files
+rm-core-files: ## Remove core files
+	@scripts/rm_core_files.sh
 
 md-lint-fix: ## Lint and format markdown files using markdownlint
 	@pre-commit run markdownlint --all-files
@@ -85,18 +85,33 @@ run-pre-commit: ## Run all pre-commit checks
 	pre-commit run --all-files
 	@printf "Pre-commit checks complete. Happy coding! 🚀 \n"
 
+## General cross-service targets
+
 update-secrets-baseline: ## Update the baseline file for detect-secrets
 	@scripts/update_secrets_baseline.sh
 
 create-pr: ## Create PR to upstream from current branch
 	@gh pr create --repo timlinux/Fork-QGIS-Planet-Plugin --web        # describe, link the issue
 
+setup-env-file: ## Write a selection of environment variables to env file
+	@scripts/setup_env_file.sh
+
 ## Plugin specific targets
 
-zip-plugin:
+clean-python-env: ## Remove the virtual environment if it exists and the extlibs
+	@if [ -n "$$VIRTUAL_ENV" ] && [ -d "$$VIRTUAL_ENV" ]; then \
+		rm -rf "$$VIRTUAL_ENV"; \
+		printf "Virtual environment removed: $$VIRTUAL_ENV\n"; \
+	fi
+	@if [ -d planet_explorer/extlibs ]; then \
+		rm -rf planet_explorer/extlibs; \
+		printf "Plugin extlibs dir removed: planet_explorer/extlibs\n"; \
+	fi
+
+zip-plugin: ## Package the planet plugin into a zip file.
 	paver package
 
-plugin-zip-size: ## Get the size of the plugin zip file
+plugin-zip-size: ## Get the size of the plugin zip file.
 	#$(MAKE) zip-plugin
 	@FILE="planet_explorer.zip"; \
 	IF_OVER=$$(fd -F --max-depth 1 --size +25m "$$FILE"); \
@@ -107,29 +122,20 @@ plugin-zip-size: ## Get the size of the plugin zip file
 		echo "OK: $$FILE size is $$SIZE"; \
 	fi
 
-setup-qgis4:
-	paver setup --clean
-	QGIS4_PLUGIN_DIR="$$HOME/.local/share/QGIS/QGIS4/profiles/PLANET/python/plugins"; \
-	rm -rf "$$QGIS4_PLUGIN_DIR/planet_explorer"; \
-	paver install --pluginpath="$$QGIS4_PLUGIN_DIR"
+## QGIS targets
 
-setup-qgis3:
-	paver setup
-	QGIS3_PLUGIN_DIR="$$HOME/.local/share/QGIS/QGIS3/profiles/PLANET/python/plugins"; \
-	rm -rf "$$QGIS3_PLUGIN_DIR/planet_explorer"
-	paver install --pluginpath="$$QGIS3_PLUGIN_DIR"
+setup-qgis: ## Fresh install of the plugin into QGIS
+	paver setup --clean
+	rm -rf "$(QGIS_PLUGIN_DIR)/planet_explorer"
+	paver install --pluginpath="$(QGIS_PLUGIN_DIR)"
 
 start-qgis:
-	# nix run .#qgis --print-build-logs
-	scripts/start_qgis.sh
+	@# nix run .#qgis --print-build-logs
+	@scripts/start_qgis.sh
 
 start-qgis-ltr:
-	# nix run .#qgis-ltr --print-build-logs
-	scripts/start_qgis_ltr.sh
-
-clean-setup:
-	rm -rf .venv/
-	rm -rf planet_explorer/extlibs/
+	@# nix run .#qgis-ltr --print-build-logs
+	@scripts/start_qgis_ltr.sh
 
 QGIS_TEST_VERSION = 4.0.3
 run-qgis-docker:
@@ -153,3 +159,7 @@ clean-vscode: ## Clean VS Code settings and extensions
 	@rm -rf .vscode 2>/dev/null || true
 	@rm -rf .vscode-extensions 2>/dev/null || true
 	@printf "... ✅ Done! \n"
+
+## Testing
+setup-notebooks: # Side load draft notebooks
+	@ln -sfn ../planet-draft-notebooks testnotebooks

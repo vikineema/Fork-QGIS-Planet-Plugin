@@ -39,7 +39,7 @@ pip_log="$LOGS_DIR/.pip-install.log"
 if [ ! -d "$VIRTUAL_ENV" ]; then
     python -m venv "$VIRTUAL_ENV"
 fi
-"$VIRTUAL_ENV/bin/python" -m pip install --upgrade pip
+env -u PYTHONPATH "$VIRTUAL_ENV/bin/python" -m pip install --upgrade pip
 
 requirements_file="$REPO_ROOT_DIR/requirements.txt"
 stamp_file="$VIRTUAL_ENV/.requirements.sha256"
@@ -50,10 +50,11 @@ if [ -f "$requirements_file" ]; then
 
     # Only re-install if requirements.txt changed or hasn't been recorded yet
     if [ "$current_hash" != "$stored_hash" ]; then
-        if "$VIRTUAL_ENV/bin/pip" install -r "$requirements_file"; then
+        if env -u PYTHONPATH "$VIRTUAL_ENV/bin/python" -m pip install -r "$requirements_file" 2>&1 | tee "$pip_log"; then
             echo "$current_hash" >"$stamp_file"
         else
             echo "❌ Pip install failed. See $pip_log for details."
+            exit 1
         fi
     else
         echo "requirements.txt unchanged, skipping pip install"

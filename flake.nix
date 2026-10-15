@@ -35,7 +35,7 @@
       };
       darglint = darglint-repo.packages.${system}.darglint;
       # Common python for all package groups
-      python = pkgs.python3;
+      python = pkgs.python313;
       pythonPkgs = python.pkgs;
       # Split packages into groups for better tracking
       lintersFormatters = with pkgs; [
@@ -49,6 +49,7 @@
         mbake
         nixfmt
         pre-commit
+        prettier
         pythonPkgs.pre-commit-hooks
         shellcheck
         shfmt
@@ -95,7 +96,7 @@
       qgisLtrWithExtras = pkgs.qgis-ltr.override {
         extraPythonPackages = ps: (qgisCommonExtraPythonPackages ps) ++ [ ps.pyqtwebengine ];
       };
-      qgisWithExtras = pkgs.qgis.override {
+      qgisWithExtras = pkgsUnstable.qgis.override {
         extraPythonPackages = ps: (qgisCommonExtraPythonPackages ps) ++ [ ps.pyqt6-webengine ];
       };
       # Qt5 packages for QGIS 3 LTR development
@@ -128,6 +129,10 @@
           ]
         ))
       ];
+      commonLibPath = pkgs.lib.makeLibraryPath [
+        # Dynamically links the pipewire libraries so Qt can resolve the symbols
+        pkgs.pipewire
+      ];
       qtPositioningHook = pyqt: ''
         export QTPOSITIONING="${pyqt}/${python.sitePackages}"
       '';
@@ -135,6 +140,7 @@
       qt5Positioning = qtPositioningHook pythonPkgs.pyqt5;
       commonPackages = lintersFormatters ++ qgisPluginsSecurity ++ devUtils ++ qgisPlanetDeps;
       commonShellHook = ''
+        export QGIS_PROFILE_NAME=${profileName}
         source ./scripts/setup_dev_env.sh
         source ./scripts/setup_qgis_envs.sh
 
@@ -173,15 +179,37 @@
         qgis-ltr = qgisLtrWithExtras;
       };
 
-      devShells.${system} = {
+      devShells.${system} = rec {
+        # Qt6 devShell for QGIS 4 development
+        qt6 = pkgs.mkShell {
+          name = "qt6";
+          packages = commonPackages ++ qt6Packages;
+          LD_LIBRARY_PATH = commonLibPath;
+          shellHook = ''
+            echo "🔧 Using Qt6 devShell (for QGIS 4 development)"
+          ''
+          + qt6Positioning
+          + commonShellHook;
+        };
+
+        # Qt5 devShell for QGIS 3 LTR development
+        qt5 = pkgs.mkShell {
+          name = "qt5";
+          packages = commonPackages ++ qt5Packages;
+          LD_LIBRARY_PATH = commonLibPath;
+          shellHook = ''
+            echo "🔧 Using Qt5 devShell (for QGIS 3 LTR development)"
+          ''
+          + qt5Positioning
+          + commonShellHook;
+        };
+
         pyqgis3-qt5 = pkgs.mkShell {
           name = "pyqgis3-qt5";
           packages = commonPackages ++ [ qgisLtrWithExtras ] ++ qt5Packages;
-          LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath [
-            pkgs.pipewire
-          ];
+          LD_LIBRARY_PATH = commonLibPath;
           shellHook = ''
-            echo "🔧 Using PyQGIS and Qt5 devShell (for QGIS 3 LTR development)"
+            echo "🔧 Using PyQGIS for QGIS 3 and Qt5 devShell (for QGIS 3 LTR development)"
           ''
           + qt5Positioning
           + commonShellHook;
@@ -189,15 +217,14 @@
         pyqgis4-qt6 = pkgs.mkShell {
           name = "pyqgis4-qt6";
           packages = commonPackages ++ [ qgisWithExtras ] ++ qt6Packages;
-          LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath [
-            pkgs.pipewire
-          ];
+          LD_LIBRARY_PATH = commonLibPath;
           shellHook = ''
-
+            echo "🔧 Using PyQGIS for QGIS 4 and Qt6 devShell (for QGIS 4 development)"
           ''
           + qt6Positioning
           + commonShellHook;
         };
+        default = pyqgis4-qt6;
       };
       apps.${system} = {
         qgis = {
