@@ -41,6 +41,7 @@
       lintersFormatters = with pkgs; [
         actionlint
         black
+        biome
         cspell
         darglint
         isort
@@ -49,7 +50,6 @@
         mbake
         nixfmt
         pre-commit
-        prettier
         pythonPkgs.pre-commit-hooks
         shellcheck
         shfmt

@@ -39,6 +39,6 @@
     // YAML
     "redhat.vscode-yaml",
     // JSON
-    "esbenp.prettier-vscode"
+    "biomejs.biome"
   ]
 }

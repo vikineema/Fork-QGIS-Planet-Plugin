@@ -35,8 +35,7 @@ yaml-lint: ## Lint YAML files
 	@pre-commit run yamllint --all-files
 
 json-lint-fix: ## JSON checks and formatting only
-	@pre-commit run check-json --all-files
-	@pre-commit run prettier-json --all-files
+	@pre-commit run biome-json-jsonc --all-files
 
 rm-core-files: ## Remove core files
 	@scripts/rm_core_files.sh

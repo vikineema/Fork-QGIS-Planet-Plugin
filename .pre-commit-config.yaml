@@ -25,21 +25,13 @@ repos:
         language: system
         types: [yaml]
 
-      - id: check-json
-        name: "🔍 Check JSON Syntax"
-        entry: check-json
-        language: system
-        types: [json]
-        exclude: ^(planet_explorer/planet_api/request-result-samples/|\.config/vscode)
-
   # Other hooks
   - repo: local
     hooks:
-      - id: prettier-json
-        name: "🧾 Format JSON & JSONC files (Prettier)"
-        entry: prettier
-        args: ["--write", "--config", ".config/.prettierrc"]
-        exclude: ^(planet_explorer/planet_api/request-result-samples/)
+      - id: biome-json-jsonc
+        name: "🧾 Format and Lint JSON & JSONC files (Biome)"
+        entry: biome
+        args: ["check", "--config-path", "biome.json", "--write", "--unsafe", "--log-level", "warn"]
         language: system
         files: \.(json|jsonc)$
 
