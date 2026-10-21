@@ -170,8 +170,7 @@ def install(options):
         ).expanduser()
     elif sys.platform == "darwin":
         dst_plugins = path(
-            "~/Library/Application Support/QGIS/QGIS3"
-            "/profiles/default/python/plugins"
+            "~/Library/Application Support/QGIS/QGIS3/profiles/default/python/plugins"
         ).expanduser()
     else:
         dst_plugins = path(
@@ -271,18 +270,14 @@ def _make_zip(zipfile, options):
 
         zipfile.writestr("planet_explorer/pe_analytics.py", txt)
 
-    metadata_filename = os.path.join(
-        os.path.dirname(__file__), "planet_explorer", "metadata.txt"
-    )
+    metadata_filename = os.path.join(os.path.dirname(__file__), "planet_explorer", "metadata.txt")
     cfg = ConfigParser()
     cfg.optionxform = str
     cfg.read(metadata_filename)
 
     if hasattr(options.package, "version"):
         if options.package.version.startswith("v"):
-            version = "".join(
-                c for c in options.package.version if c.isdigit() or c == "."
-            )
+            version = "".join(c for c in options.package.version if c.isdigit() or c == ".")
         else:
             version = f"{cfg.get('general', 'version')}-{options.package.version}"
         cfg.set("general", "version", version)
@@ -290,9 +285,7 @@ def _make_zip(zipfile, options):
     cfg.write(buf)
     zipfile.writestr("planet_explorer/metadata.txt", buf.getvalue())
 
-    utils_filename = os.path.join(
-        os.path.dirname(__file__), "planet_explorer", "pe_utils.py"
-    )
+    utils_filename = os.path.join(os.path.dirname(__file__), "planet_explorer", "pe_utils.py")
     with open(utils_filename) as f:
         txt = f.read()
         commitid = (
@@ -347,9 +340,7 @@ def generate_plugin_repo_xml(options):
     repo_base_dir = Path(__file__).parent.resolve() / "docs" / "repository"
     repo_base_dir.mkdir(parents=True, exist_ok=True)
 
-    metadata_filename = os.path.join(
-        os.path.dirname(__file__), "planet_explorer", "metadata.txt"
-    )
+    metadata_filename = os.path.join(os.path.dirname(__file__), "planet_explorer", "metadata.txt")
     metadata = ConfigParser()
     metadata.optionxform = str
     metadata.read(metadata_filename)
@@ -357,9 +348,7 @@ def generate_plugin_repo_xml(options):
     if hasattr(options, "version"):
         version = options.version
         if options.version.startswith("v"):
-            version = "".join(
-                c for c in options.package.version if c.isdigit() or c == "."
-            )
+            version = "".join(c for c in options.package.version if c.isdigit() or c == ".")
         metadata.set("general", "version", version)
 
     fragment_template = """
@@ -424,7 +413,7 @@ def _get_existing_releases():
         list[GithubRelease]: A list of releases that have a downloadable
             zip asset attached.
     """
-    base_url = "https://api.github.com/repos/" "planetlabs/qgis-planet-plugin/releases"
+    base_url = "https://api.github.com/repos/planetlabs/qgis-planet-plugin/releases"
     response = httpx.get(base_url)
     result = []
     if response.status_code == 200:

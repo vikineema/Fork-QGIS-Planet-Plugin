@@ -31,9 +31,6 @@ export CONFIG_DIR="$REPO_ROOT_DIR/.config"
 # is expected to do so.
 export ENV_FILE="$REPO_ROOT_DIR/.env"
 
-# Required for biome
-export BIOME_CONFIG_PATH="$REPO_ROOT_DIR/biome.json"
-
 # Setup the python virtual environment
 echo "Setting up python virtual environment ..."
 export VIRTUAL_ENV="$REPO_ROOT_DIR/.venv"

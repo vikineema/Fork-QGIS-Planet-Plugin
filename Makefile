@@ -64,10 +64,8 @@ make-lint-fix: ## Format and validate Makefiles
 	@pre-commit run mbake-validate --all-files
 
 py-lint-fix: ## Lint and format python files.
-	@pre-commit run black --all-files
-	@pre-commit run isort --all-files
+	@pre-commit run ruff-formatter --all-files
 	@pre-commit run flake8 --all-files
-	@pre-commit run ensure-utf8-encoding --all-files
 	@pre-commit run ensure-google-docstrings --all-files
 
 security-checks: ## Run QGIS plugins security scanning

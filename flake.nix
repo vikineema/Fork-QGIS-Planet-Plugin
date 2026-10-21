@@ -40,17 +40,16 @@
       # Split packages into groups for better tracking
       lintersFormatters = with pkgs; [
         actionlint
-        black
         biome
         cspell
         darglint
-        isort
         jq
         markdownlint-cli
         mbake
         nixfmt
         pre-commit
         pythonPkgs.pre-commit-hooks
+        ruff
         shellcheck
         shfmt
         taplo

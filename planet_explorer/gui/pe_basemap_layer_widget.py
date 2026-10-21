@@ -82,9 +82,7 @@ class CustomSlider(QSlider):
                 self,
             )
 
-            slider_space = style.pixelMetric(
-                style.PixelMetric.PM_SliderSpaceAvailable, opt
-            )
+            slider_space = style.pixelMetric(style.PixelMetric.PM_SliderSpaceAvailable, opt)
             range_x = style.sliderPositionFromValue(
                 self.minimum(), self.maximum(), self.value(), slider_space
             )
@@ -142,13 +140,10 @@ class CustomSlider(QSlider):
 
             opt.sliderPosition = self.value()
             opt.sliderValue = self.value()
-            style.drawComplexControl(
-                QStyle.ComplexControl.CC_Slider, opt, painter, self
-            )
+            style.drawComplexControl(QStyle.ComplexControl.CC_Slider, opt, painter, self)
 
 
 class BasemapRenderingOptionsWidget(QFrame):
-
     values_changed = pyqtSignal()
 
     def __init__(self, datatype=None):
@@ -212,12 +207,8 @@ class BasemapRenderingOptionsWidget(QFrame):
                 if len(ramps) != len(list(self.ramps["colors"].keys())):
                     item = QListWidgetItem()
                     self.listWidget.addItem(item)
-                    label = QLabel(
-                        "<a href='#' style='color: grey;'>Show all ramps</a>"
-                    )
-                    label.setAlignment(
-                        Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter
-                    )
+                    label = QLabel("<a href='#' style='color: grey;'>Show all ramps</a>")
+                    label.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
                     label.linkActivated.connect(self._show_all_ramps)
                     self.listWidget.setItemWidget(item, label)
             else:
@@ -350,8 +341,7 @@ class BasemapLayerWidget(QWidget):
         else:
             self.layout = QVBoxLayout()
             self.labelWarning = QLabel(
-                '<span style="color:red;"><b>Not a valid Planet basemap'
-                " layer</b></span>"
+                '<span style="color:red;"><b>Not a valid Planet basemap layer</b></span>'
             )
             self.layout.addWidget(self.labelWarning)
             self.setLayout(self.layout)
@@ -383,8 +373,7 @@ class BasemapLayerWidget(QWidget):
             except Exception:
                 mosaicname, mosaicid = self.mosaics[value]
                 TILE_URL_TEMPLATE = (
-                    "https://tiles.planet.com/basemaps/v1/planet-tiles/"
-                    "%s/gmap/{z}/{x}/{y}.png"
+                    "https://tiles.planet.com/basemaps/v1/planet-tiles/%s/gmap/{z}/{x}/{y}.png"
                 )
                 tile_url = TILE_URL_TEMPLATE % (mosaicid,)
             self.layer.setCustomProperty(PLANET_CURRENT_MOSAIC, mosaicname)
@@ -453,9 +442,7 @@ class BasemapLayerWidget(QWidget):
                         query_params[k] = [v]
 
             tile_url = urlunparse(
-                parts._replace(
-                    query=urlencode(query_params, doseq=True, quote_via=quote)
-                )
+                parts._replace(query=urlencode(query_params, doseq=True, quote_via=quote))
             )
             uri = f"type=xyz&url={tile_url}"
 
@@ -472,7 +459,7 @@ class BasemapLayerWidget(QWidget):
             self.ensure_correct_size()
         except RuntimeError as error:
             QgsMessageLog.logMessage(
-                f"Problem changing source" f" {error}",
+                f"Problem changing source {error}",
                 QGIS_LOG_SECTION_NAME,
                 Qgis.MessageLevel.Info,
             )

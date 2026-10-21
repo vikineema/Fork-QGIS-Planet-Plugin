@@ -16,6 +16,7 @@
 *                                                                         *
 ***************************************************************************
 """
+
 __author__ = "Planet Federal"
 __date__ = "August 2020"
 __copyright__ = "(C) 2019 Planet Inc, https://planet.com"
@@ -62,7 +63,6 @@ PLACEHOLDER_THUMB = ":/plugins/planet_explorer/thumb-placeholder-128.svg"
 
 
 class BasemapsListWidget(QListWidget):
-
     basemapsSelectionChanged = pyqtSignal()
 
     def __init__(self):
@@ -145,7 +145,6 @@ class BasemapListItem(QListWidgetItem):
 
 
 class BasemapItemWidget(QWidget):
-
     basemapSelected = pyqtSignal()
 
     def __init__(self, mosaic):
@@ -204,7 +203,7 @@ class BasemapItemWidget(QWidget):
                 )
             else:
                 THUMBNAIL_DEFAULT_URL = (
-                    "https://tiles.planet.com/basemaps/v1/planet-tiles/" "{name}/thumb"
+                    "https://tiles.planet.com/basemaps/v1/planet-tiles/{name}/thumb"
                 )
                 download_thumbnail(
                     THUMBNAIL_DEFAULT_URL.format(name=mosaic[NAME]),

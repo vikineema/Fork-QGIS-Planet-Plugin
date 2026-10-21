@@ -107,8 +107,7 @@ from requests import exceptions
 
 PLANET_COM = "https://planet.com"
 SAT_SPECS_PDF = (
-    "https://assets.planet.com/docs/"
-    "Planet_Combined_Imagery_Product_Specs_letter_screen.pdf"
+    "https://assets.planet.com/docs/Planet_Combined_Imagery_Product_Specs_letter_screen.pdf"
 )
 PLANET_SUPPORT_COMMUNITY = "https://support.planet.com"
 PLANET_UNIVERSITY = "https://university.planet.com/"
@@ -139,9 +138,7 @@ class PlanetExplorer(object):
             locale = locale_value[0:2]
         else:
             locale = str(locale_value)[0:2]
-        locale_path = safe_join(
-            self.plugin_dir, "i18n", "{0}Plugin_{1}.qm".format(PE, locale)
-        )
+        locale_path = safe_join(self.plugin_dir, "i18n", "{0}Plugin_{1}.qm".format(PE, locale))
         if os.path.exists(locale_path):
             self.translator = QTranslator()
             self.translator.load(locale_path)
@@ -244,7 +241,7 @@ class PlanetExplorer(object):
             elif issubclass(t, planet.exceptions.ServerError):
                 s = "Server Error.\n Please, try again later"
             elif issubclass(t, urllib3.exceptions.ProxySchemeUnknown):
-                s = "Proxy Error\n Proxy URL must start with 'http://' or" " 'https://'"
+                s = "Proxy Error\n Proxy URL must start with 'http://' or 'https://'"
 
             if s:
                 QMessageBox.warning(self.iface.mainWindow(), "Error", s)
@@ -449,9 +446,7 @@ class PlanetExplorer(object):
         info_menu.addAction(p_com_act)
 
         p_explorer_act = QAction(QIcon(EXT_LINK), "Planet Explorer web app", info_menu)
-        p_explorer_act.triggered[bool].connect(
-            lambda: open_link_with_browser(PLANET_EXPLORER)
-        )
+        p_explorer_act.triggered[bool].connect(lambda: open_link_with_browser(PLANET_EXPLORER))
         info_menu.addAction(p_explorer_act)
 
         p_sat_act = QAction(QIcon(EXT_LINK), "Satellite specs PDF", info_menu)
@@ -465,27 +460,19 @@ class PlanetExplorer(object):
         info_menu.addAction(p_support_act)
 
         p_university_act = QAction(QIcon(EXT_LINK), "Planet University", info_menu)
-        p_university_act.triggered[bool].connect(
-            lambda: open_link_with_browser(PLANET_UNIVERSITY)
-        )
+        p_university_act.triggered[bool].connect(lambda: open_link_with_browser(PLANET_UNIVERSITY))
         info_menu.addAction(p_university_act)
 
         p_community_act = QAction(QIcon(EXT_LINK), "Planet Community", info_menu)
-        p_community_act.triggered[bool].connect(
-            lambda: open_link_with_browser(PLANET_COMMUNITY)
-        )
+        p_community_act.triggered[bool].connect(lambda: open_link_with_browser(PLANET_COMMUNITY))
         info_menu.addAction(p_community_act)
 
         p_whatsnew_act = QAction(QIcon(EXT_LINK), "What's new", info_menu)
-        p_whatsnew_act.triggered[bool].connect(
-            lambda: open_link_with_browser(PLANET_INTEGRATIONS)
-        )
+        p_whatsnew_act.triggered[bool].connect(lambda: open_link_with_browser(PLANET_INTEGRATIONS))
         info_menu.addAction(p_whatsnew_act)
 
         p_sales_act = QAction(QIcon(EXT_LINK), "Sales", info_menu)
-        p_sales_act.triggered[bool].connect(
-            lambda: open_link_with_browser(PLANET_SALES)
-        )
+        p_sales_act.triggered[bool].connect(lambda: open_link_with_browser(PLANET_SALES))
         info_menu.addAction(p_sales_act)
 
         add_menu_section_action("Documentation", info_menu)
@@ -512,9 +499,7 @@ class PlanetExplorer(object):
         user_menu = QMenu()
 
         self.acct_act = QAction(QIcon(EXT_LINK), "Account", user_menu)
-        self.acct_act.triggered[bool].connect(
-            lambda: QDesktopServices.openUrl(QUrl(ACCOUNT_URL))
-        )
+        self.acct_act.triggered[bool].connect(lambda: QDesktopServices.openUrl(QUrl(ACCOUNT_URL)))
         user_menu.addAction(self.acct_act)
 
         self.logout_act = QAction("Logout", user_menu)
@@ -577,17 +562,12 @@ class PlanetExplorer(object):
             self._terms_browser.setMinimumSize(600, 700)
             # TODO: Template terms.html first section, per subscription level
             #       Collect subscription info from self.p_client.user
-            self._terms_browser.setSource(
-                QUrl("qrc:/plugins/planet_explorer/terms.html")
-            )
+            self._terms_browser.setSource(QUrl("qrc:/plugins/planet_explorer/terms.html"))
             self._terms_browser.setWindowModality(Qt.WindowModality.ApplicationModal)
         self._terms_browser.show()
 
     def login(self):
-        if (
-            Qgis.QGIS_VERSION_INT in [32000, 32001, 32002, 32003]
-            and platform.system() == "Darwin"
-        ):
+        if Qgis.QGIS_VERSION_INT in [32000, 32001, 32002, 32003] and platform.system() == "Darwin":
             text = (
                 "WARNING: Your configuration may encounter serious issues with the"
                 " Planet QGIS Plugin using QGIS v3.20. These issues are documented in"
@@ -601,9 +581,7 @@ class PlanetExplorer(object):
             )
             QMessageBox.warning(self.iface.mainWindow(), "Planet Explorer", text)
         try:
-            self.auth_dialog_window = PlanetAuthenticationDialog(
-                self.iface.mainWindow()
-            )
+            self.auth_dialog_window = PlanetAuthenticationDialog(self.iface.mainWindow())
             result = self.auth_dialog_window.exec()
         except Exception:
             traceback.print_exc()

@@ -245,30 +245,24 @@ def filters_as_text_from_request(request):
             minvalue = slider_filter["minimum"]
             maxvalue = slider_filter["maximum"]
         s += (
-            f'{slider_filter["title"]}: {minvalue}{slider_filter["suffix"]}'
-            f' - {maxvalue}{slider_filter["suffix"]}\n'
+            f"{slider_filter['title']}: {minvalue}{slider_filter['suffix']}"
+            f" - {maxvalue}{slider_filter['suffix']}\n"
         )
 
     filters = filters_from_request(request, filter_type="PermissionFilter")
     if filters:
-        s += (
-            "Only show images you can download:"
-            f" {'assets:download' in filters[0]['config']}\n"
-        )
+        s += f"Only show images you can download: {'assets:download' in filters[0]['config']}\n"
     else:
         s += "Only show images you can download: False\n"
     filters = filters_from_request(request, "ground_control")
     if filters:
-        s += (
-            "Only show images with ground control:"
-            f" {'assets:download' in filters[0]['config']}\n"
-        )
+        s += f"Only show images with ground control: {'assets:download' in filters[0]['config']}\n"
     else:
         s += "Only show images with ground control: False\n"
 
     filters = filters_from_request(request, "id")
     if filters:
-        s += f'IDs: {",".join(filters[0]["config"])}'
+        s += f"IDs: {','.join(filters[0]['config'])}"
 
     return s
 
@@ -288,14 +282,11 @@ class PlanetFilterMixin(QObject):
 
         self._plugin = plugin
 
-    def _show_message(
-        self, message, level=Qgis.MessageLevel.Info, duration=None, show_more=None
-    ):
+    def _show_message(self, message, level=Qgis.MessageLevel.Info, duration=None, show_more=None):
         self._plugin.show_message(message, level, duration, show_more)
 
 
 class PlanetAOIFilter(AOI_FILTER_BASE, AOI_FILTER_WIDGET, PlanetFilterMixin):
-
     filtersChanged = pyqtSignal()
     savedSearchSelected = pyqtSignal(object)
     zoomToAOIRequested = pyqtSignal()
@@ -315,9 +306,7 @@ class PlanetAOIFilter(AOI_FILTER_BASE, AOI_FILTER_WIDGET, PlanetFilterMixin):
 
         self.color = color
 
-        self._aoi_box = QgsRubberBand(
-            iface.mapCanvas(), QgsWkbTypes.GeometryType.PolygonGeometry
-        )
+        self._aoi_box = QgsRubberBand(iface.mapCanvas(), QgsWkbTypes.GeometryType.PolygonGeometry)
         self._aoi_box.setFillColor(QColor(0, 0, 0, 0))
         self._aoi_box.setStrokeColor(color)
         self._aoi_box.setWidth(3)
@@ -432,14 +421,10 @@ class PlanetAOIFilter(AOI_FILTER_BASE, AOI_FILTER_WIDGET, PlanetFilterMixin):
         selection_menu = QMenu(self)
 
         self.multi_polygon_select_act = QAction("Selected features", selection_menu)
-        self.multi_polygon_select_act.triggered[bool].connect(
-            self.aoi_from_multiple_polygons
-        )
+        self.multi_polygon_select_act.triggered[bool].connect(self.aoi_from_multiple_polygons)
         selection_menu.addAction(self.multi_polygon_select_act)
 
-        self.bound_select_act = QAction(
-            "Selected features (bounding box)", selection_menu
-        )
+        self.bound_select_act = QAction("Selected features (bounding box)", selection_menu)
         self.bound_select_act.triggered[bool].connect(self.aoi_from_bound)
         selection_menu.addAction(self.bound_select_act)
 
@@ -470,9 +455,7 @@ class PlanetAOIFilter(AOI_FILTER_BASE, AOI_FILTER_WIDGET, PlanetFilterMixin):
             bool: True if the layer is a valid polygon vector layer, False otherwise.
         """
         if not layer.isValid():
-            self._show_message(
-                "Invalid layer", level=Qgis.MessageLevel.Warning, duration=10
-            )
+            self._show_message("Invalid layer", level=Qgis.MessageLevel.Warning, duration=10)
             return False
         if not isinstance(layer, QgsVectorLayer):
             self._show_message(
@@ -490,9 +473,7 @@ class PlanetAOIFilter(AOI_FILTER_BASE, AOI_FILTER_WIDGET, PlanetFilterMixin):
             return False
         return True
 
-    def _get_valid_polygon_layers(
-        self, layer: QgsVectorLayer
-    ) -> list[QgsVectorLayer] | None:
+    def _get_valid_polygon_layers(self, layer: QgsVectorLayer) -> list[QgsVectorLayer] | None:
         """Returns a list of valid polygon layers from a file, handling embedded layers.
 
         Args:
@@ -512,8 +493,7 @@ class PlanetAOIFilter(AOI_FILTER_BASE, AOI_FILTER_WIDGET, PlanetFilterMixin):
             embedded_layer = QgsVectorLayer(embedded_file, "")
             if (
                 embedded_layer.isValid()
-                and embedded_layer.geometryType()
-                == QgsWkbTypes.GeometryType.PolygonGeometry
+                and embedded_layer.geometryType() == QgsWkbTypes.GeometryType.PolygonGeometry
             ):
                 embedded_layers.append(embedded_layer)
         return embedded_layers if embedded_layers else None
@@ -527,9 +507,7 @@ class PlanetAOIFilter(AOI_FILTER_BASE, AOI_FILTER_WIDGET, PlanetFilterMixin):
             None: If errors encountered such as file name is not provided or
                 if no valid polygon layers are found.
         """
-        filename, _ = QFileDialog.getOpenFileName(
-            self, "Select AOI file", "", "All files(*.*)"
-        )
+        filename, _ = QFileDialog.getOpenFileName(self, "Select AOI file", "", "All files(*.*)")
         if not filename:
             return None
 
@@ -552,9 +530,7 @@ class PlanetAOIFilter(AOI_FILTER_BASE, AOI_FILTER_WIDGET, PlanetFilterMixin):
         Checks if the layer(s) are valid. Then calls the function to calculate the
         AOI.
         """
-        filename, _ = QFileDialog.getOpenFileName(
-            self, "Select AOI file", "", "All files(*.*)"
-        )
+        filename, _ = QFileDialog.getOpenFileName(self, "Select AOI file", "", "All files(*.*)")
         if not filename:
             return
 
@@ -898,9 +874,7 @@ class PlanetAOIFilter(AOI_FILTER_BASE, AOI_FILTER_WIDGET, PlanetFilterMixin):
     def aoi_from_multiple_polygons(self):
         layer = iface.activeLayer()
         if not layer.isValid():
-            self._show_message(
-                "Invalid layer", level=Qgis.MessageLevel.Warning, duration=10
-            )
+            self._show_message("Invalid layer", level=Qgis.MessageLevel.Warning, duration=10)
             return
         if not isinstance(layer, QgsVectorLayer):
             self._show_message(
@@ -1011,11 +985,7 @@ class PlanetAOIFilter(AOI_FILTER_BASE, AOI_FILTER_WIDGET, PlanetFilterMixin):
         self.show_aoi_area_size()
 
     def hide_aoi_if_matches_geom(self, geom):
-        color = (
-            QColor(0, 0, 0, 0)
-            if self._aoi_box.asGeometry().equals(geom)
-            else self.color
-        )
+        color = QColor(0, 0, 0, 0) if self._aoi_box.asGeometry().equals(geom) else self.color
         self._aoi_box.setStrokeColor(color)
 
     def show_aoi(self):
@@ -1182,9 +1152,7 @@ class PlanetDailyFilter(DAILY_BASE, DAILY_WIDGET, PlanetFilterMixin):
         layout = QVBoxLayout()
         layout.setMargin(0)
         self.legacyWarningWidget = LegacyWarningWidget()
-        self.legacyWarningWidget.updateLegacySearch.connect(
-            self.updateLegacySearch.emit
-        )
+        self.legacyWarningWidget.updateLegacySearch.connect(self.updateLegacySearch.emit)
         layout.addWidget(self.legacyWarningWidget)
         self.frameWarningLegacySearch.setLayout(layout)
         self.frameWarningLegacySearch.setVisible(False)
@@ -1295,9 +1263,7 @@ class PlanetDailyFilter(DAILY_BASE, DAILY_WIDGET, PlanetFilterMixin):
             )
             filters.append(start_date_filter)
         elif end_date:
-            end_date_filter = date_range_filter(
-                "acquired", lte=datetime.fromisoformat(end_date)
-            )
+            end_date_filter = date_range_filter("acquired", lte=datetime.fromisoformat(end_date))
             filters.append(end_date_filter)
         return filters
 
@@ -1321,9 +1287,7 @@ class PlanetDailyFilter(DAILY_BASE, DAILY_WIDGET, PlanetFilterMixin):
                 slider_max = slider.max
 
             if range_low != slider.min and range_high != slider_max:
-                slide_filter = range_filter(
-                    slider.filter_key, gte=range_low, lte=range_high
-                )
+                slide_filter = range_filter(slider.filter_key, gte=range_low, lte=range_high)
             elif range_low != slider.min:
                 slide_filter = range_filter(slider.filter_key, gte=range_low)
             elif range_high != slider_max:
@@ -1356,9 +1320,7 @@ class PlanetDailyFilter(DAILY_BASE, DAILY_WIDGET, PlanetFilterMixin):
             string_ids_filter = string_in_filter("id", ids_actual)
             filters.append(string_ids_filter)
         else:
-            self._show_message(
-                "No valid ID present", level=Qgis.MessageLevel.Warning, duration=10
-            )
+            self._show_message("No valid ID present", level=Qgis.MessageLevel.Warning, duration=10)
         return filters
 
     def _build_publish_filters(self) -> list:
@@ -1437,9 +1399,7 @@ class PlanetDailyFilter(DAILY_BASE, DAILY_WIDGET, PlanetFilterMixin):
             populated_filters.append(instrument_filter)
 
         server_filters = self._build_server_filters(populated_filters)
-        local_filters = [
-            f for f in populated_filters if f["field_name"] in LOCAL_FILTERS
-        ]
+        local_filters = [f for f in populated_filters if f["field_name"] in LOCAL_FILTERS]
         return server_filters, local_filters, publish_filters
 
     def _set_source_filters(self, request: dict) -> None:
@@ -1467,9 +1427,7 @@ class PlanetDailyFilter(DAILY_BASE, DAILY_WIDGET, PlanetFilterMixin):
             all_assets = []
             used_assets = []
             for item_type in sources:
-                all_assets.extend(
-                    PlanetClient.getInstance().asset_types_for_item_type(item_type)
-                )
+                all_assets.extend(PlanetClient.getInstance().asset_types_for_item_type(item_type))
             for filt in asset_filters:
                 used_assets.extend(filt.get("config", []))
             used_bands = []
@@ -1495,14 +1453,10 @@ class PlanetDailyFilter(DAILY_BASE, DAILY_WIDGET, PlanetFilterMixin):
         if filters:
             gte = filters[0]["config"].get("gte")
             if gte is not None:
-                self.startDateEdit.setDateTime(
-                    QDateTime.fromString(gte, Qt.DateFormat.ISODate)
-                )
+                self.startDateEdit.setDateTime(QDateTime.fromString(gte, Qt.DateFormat.ISODate))
             lte = filters[0]["config"].get("lte")
             if lte is not None:
-                self.endDateEdit.setDateTime(
-                    QDateTime.fromString(lte, Qt.DateFormat.ISODate)
-                )
+                self.endDateEdit.setDateTime(QDateTime.fromString(lte, Qt.DateFormat.ISODate))
 
     def _set_slider_filters(self, request: dict) -> None:
         """Set range slider values from request.
@@ -1540,9 +1494,7 @@ class PlanetDailyFilter(DAILY_BASE, DAILY_WIDGET, PlanetFilterMixin):
         """
         filters = filters_from_request(request, filter_type="PermissionFilter")
         if filters:
-            self.chkFullCatalog.setChecked(
-                "assets:download" not in filters[0]["config"]
-            )
+            self.chkFullCatalog.setChecked("assets:download" not in filters[0]["config"])
         else:
             self.chkFullCatalog.setChecked(False)
 

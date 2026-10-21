@@ -28,8 +28,8 @@ repos:
   # Other hooks
   - repo: local
     hooks:
-      - id: biome-json-jsonc
-        name: "🧾 Format and Lint JSON & JSONC files (Biome)"
+      - id: biome-json
+        name: "🧾 Format and Lint JSON & JSONC files (biome)"
         entry: biome
         args: ["check", "--config-path", "biome.json", "--write", "--unsafe", "--log-level", "warn"]
         language: system
@@ -100,7 +100,7 @@ repos:
 
       - id: taplo-fmt
         name: "🧵 Format and lint TOML files using taplo"
-        entry: taplo fmt
+        entry: env RUST_LOG=warn taplo fmt
         args: ["--config", ".config/.taplo.toml"]
         language: system
         types: [toml]
@@ -122,32 +122,17 @@ repos:
   # Python code hooks
   - repo: local
     hooks:
-      - id: black
-        name: "🖤 black"
-        entry: black
+      - id: ruff-formatter
+        name: " Ruff Formatter"
+        entry: ruff format
+        args: ["--config", ".config/ruff.toml", "--exit-non-zero-on-format", "--color", "always"]
         language: system
         types: [python]
-
-      - id: isort
-        name: "📦 isort - sort Python imports"
-        entry: isort
-        args: ["--settings-path=.config/.isort.cfg"]
-        language: system
-        types: [python]
-        stages: [pre-commit]
 
       - id: flake8
         name: " flake8 Python Linter"
         entry: bash scripts/flake8_check.sh
         language: system
-        pass_filenames: false
-
-      - id: ensure-utf8-encoding
-        name: "🌐 Ensure UTF-8 encoding declaration in Python files"
-        entry: bash scripts/encoding_check.sh
-        language: system
-        types: [python]
-        stages: [pre-commit]
         pass_filenames: false
 
       - id: ensure-google-docstrings

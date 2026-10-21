@@ -7,9 +7,7 @@ from qgis.PyQt.QtCore import pyqtSignal
 from qgis.PyQt.QtGui import QPalette
 
 WIDGET, BASE = uic.loadUiType(
-    os.path.join(
-        os.path.dirname(os.path.dirname(__file__)), "ui", "pe_legacy_warning_widget.ui"
-    )
+    os.path.join(os.path.dirname(os.path.dirname(__file__)), "ui", "pe_legacy_warning_widget.ui")
 )
 
 text_without_id = """
@@ -24,7 +22,6 @@ Legacy search filters are disabled because we've updated PlanetScope items to PS
 
 
 class LegacyWarningWidget(BASE, WIDGET):
-
     updateLegacySearch = pyqtSignal()
 
     def __init__(self, parent=None):
