@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        qgis_version: ["4.0", "3.44"]
+        qgis_version: ["4.2", "3.44"]
     steps:
       - name: Checkout
         uses: actions/checkout@v5
