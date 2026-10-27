@@ -23,6 +23,8 @@ repository=https://github.com/planetlabs/qgis-planet-plugin
 hasProcessingProvider=no
 # Uncomment the following line and add your changelog:
 changelog=
+  v3.1.0 (2026-10-28)
+  * Add "show only tasked imagery" search filter for daily imagery
   v3.0.1 (2026-10-15)
   * Fixed missing SR Mosaic visualization options
   * Authenticate basemap thumbnails using API keys

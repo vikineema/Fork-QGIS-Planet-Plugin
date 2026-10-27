@@ -225,6 +225,23 @@ def filters_from_request(
     return filters
 
 
+def _permission_filters_as_text_from_request(request):
+
+    permission_filters = filters_from_request(request, filter_type="PermissionFilter")
+
+    permissions = set()
+    for f in permission_filters:
+        permissions.update(f.get("config", []))
+
+    permission_filters_as_text = ""
+    permission_filters_as_text += (
+        f"Only show images you can download: {'assets:download' in permissions}\n"
+    )
+    permission_filters_as_text += f"Only show high resolution imagery that your organization has tasked: {'tasked' in permissions}\n"
+
+    return permission_filters_as_text
+
+
 def filters_as_text_from_request(request):
     s = ""
     for slider_filter in slider_filters:
@@ -249,20 +266,14 @@ def filters_as_text_from_request(request):
             f" - {maxvalue}{slider_filter['suffix']}\n"
         )
 
-    filters = filters_from_request(request, filter_type="PermissionFilter")
-    if filters:
-        s += f"Only show images you can download: {'assets:download' in filters[0]['config']}\n"
-    else:
-        s += "Only show images you can download: False\n"
-    filters = filters_from_request(request, "ground_control")
-    if filters:
-        s += f"Only show images with ground control: {'assets:download' in filters[0]['config']}\n"
-    else:
-        s += "Only show images with ground control: False\n"
+    s += _permission_filters_as_text_from_request(request)
 
-    filters = filters_from_request(request, "id")
-    if filters:
-        s += f"IDs: {','.join(filters[0]['config'])}"
+    ground_control_filters = filters_from_request(request, "ground_control")
+    s += f"Only show images with ground control: {bool(ground_control_filters)}\n"
+
+    id_filters = filters_from_request(request, "id")
+    if id_filters:
+        s += f"IDs: {','.join(id_filters[0]['config'])}"
 
     return s
 
@@ -1175,6 +1186,7 @@ class PlanetDailyFilter(DAILY_BASE, DAILY_WIDGET, PlanetFilterMixin):
 
         self.chkGroundControl.stateChanged[int].connect(self.filters_changed)
         self.chkFullCatalog.stateChanged[int].connect(self.filters_changed)
+        self.chkTaskedImagery.stateChanged[int].connect(self.filters_changed)
 
     def _yellowFilterToggled(self):
         if self.chkYellow.isChecked():
@@ -1378,6 +1390,13 @@ class PlanetDailyFilter(DAILY_BASE, DAILY_WIDGET, PlanetFilterMixin):
             gc_filter = not_filter(string_in_filter("ground_control", ["false"]))
             server_filters.append(gc_filter)
 
+        if self.chkTaskedImagery.isChecked():
+            tasked_imagery_filter = {
+                "type": "PermissionFilter",
+                "config": ["tasked"],
+            }
+            server_filters.append(tasked_imagery_filter)
+
         server_filters.extend(
             [f for f in populated_filters if f["field_name"] not in LOCAL_FILTERS]
         )
@@ -1487,16 +1506,20 @@ class PlanetDailyFilter(DAILY_BASE, DAILY_WIDGET, PlanetFilterMixin):
                 slider.setRangeHigh(slider.max)
 
     def _set_permission_filters(self, request: dict) -> None:
-        """Set full catalog checkbox from permission filters in request.
+        """Set full catalog checkbox and tasked imagery checkbox
+        from permission filters in request.
 
         Args:
             request (dict): The request dictionary.
         """
         filters = filters_from_request(request, filter_type="PermissionFilter")
-        if filters:
-            self.chkFullCatalog.setChecked("assets:download" not in filters[0]["config"])
-        else:
-            self.chkFullCatalog.setChecked(False)
+
+        permissions = set()
+        for f in filters:
+            permissions.update(f.get("config", []))
+
+        self.chkFullCatalog.setChecked("assets:download" not in permissions)
+        self.chkTaskedImagery.setChecked("tasked" in permissions)
 
     def _set_instrument_filters(self, request: dict) -> None:
         """Set instrument checkboxes from request.

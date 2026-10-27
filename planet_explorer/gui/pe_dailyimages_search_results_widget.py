@@ -69,7 +69,12 @@ from ..pe_utils import (
     qgsgeometry_from_geojson,
     safe_join,
 )
-from ..planet_api.p_client import ITEM_ASSET_DL_REGEX, ITEM_STREAM_REGEX, PlanetClient
+from ..planet_api.p_client import (
+    ITEM_ASSET_DL_REGEX,
+    ITEM_STREAM_REGEX,
+    ITEM_TASKED_REGEX,
+    PlanetClient,
+)
 from .pe_gui_utils import waitcursor
 from .pe_thumbnails import createCompoundThumbnail, download_thumbnail
 
@@ -101,6 +106,7 @@ ZOOMTO_ICON = QIcon(":/plugins/planet_explorer/zoom-target.svg")
 SORT_ICON = QIcon(iconPath("sort.svg"))
 LOCK_ICON = QIcon(":/plugins/planet_explorer/lock-light.svg")
 PLACEHOLDER_THUMB = ":/plugins/planet_explorer/thumb-placeholder-128.svg"
+TASKED_ICON = QIcon(":/plugins/planet_explorer/tasked.svg")
 
 LOG_VERBOSE = os.environ.get("PYTHON_LOG_VERBOSE", None)
 
@@ -441,6 +447,10 @@ class ItemWidgetBase(QFrame):
         self.checkBox.clicked.connect(self.check_box_state_changed)
         self.nameLabel = QLabel(text)
         self.iconLabel = QLabel()
+        self.labelTasked = QLabel()
+        self.labelTasked.setPixmap(TASKED_ICON.pixmap(QSize(18, 18)))
+        self.labelTasked.setToolTip("Contains tasked items")
+        self.labelTasked.setVisible(True)
         self.labelZoomTo = QLabel()
         self.labelZoomTo.setPixmap(ZOOMTO_ICON.pixmap(QSize(18, 18)))
         self.labelZoomTo.setToolTip("Zoom to extent")
@@ -469,6 +479,7 @@ class ItemWidgetBase(QFrame):
             download_thumbnail(thumbnailurl, self)
         layout.addWidget(self.nameLabel)
         layout.addStretch()
+        layout.addWidget(self.labelTasked)
         layout.addWidget(self.labelZoomTo)
         layout.addWidget(self.labelAddPreview)
         layout.addSpacing(10)
@@ -809,6 +820,7 @@ class SceneItemWidget(ItemWidgetBase):
         if len(permissions) == 0:
             self.downloadable = False
             self.streamable = False
+            self.contains_tasked_items = False
         else:
             # Check for download permissions (can order/download)
             dl_matches = [ITEM_ASSET_DL_REGEX.match(s) is not None for s in permissions]
@@ -817,6 +829,14 @@ class SceneItemWidget(ItemWidgetBase):
             # Check for streaming permissions (can view on map)
             stream_matches = [ITEM_STREAM_REGEX.match(s) is not None for s in permissions]
             self.streamable = any(stream_matches)
+
+            # Check if contains assets that user's organisation
+            # has ordered via tasking API or tasking dashboard.
+            tasked_matches = [ITEM_TASKED_REGEX.match(s) is not None for s in permissions]
+            self.contains_tasked_items = any(tasked_matches)
+
+        # Tasked item icon: only show if image contains tasked items.
+        self.labelTasked.setVisible(self.contains_tasked_items)
 
         # Lock icon: only show if user has NO access (neither download nor streaming)
         has_any_access = self.downloadable or self.streamable

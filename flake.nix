@@ -95,7 +95,7 @@
       qgisLtrWithExtras = pkgs.qgis-ltr.override {
         extraPythonPackages = ps: (qgisCommonExtraPythonPackages ps) ++ [ ps.pyqtwebengine ];
       };
-      qgisWithExtras = pkgsUnstable.qgis.override {
+      qgisWithExtras = pkgs.qgis.override {
         extraPythonPackages = ps: (qgisCommonExtraPythonPackages ps) ++ [ ps.pyqt6-webengine ];
       };
       # Qt5 packages for QGIS 3 LTR development

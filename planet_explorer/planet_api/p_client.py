@@ -57,6 +57,7 @@ log = logging.getLogger(__name__)
 
 ITEM_ASSET_DL_REGEX = re.compile(r"^assets\.(.*):download$")
 ITEM_STREAM_REGEX = re.compile(r"^webtiles?:stream$")
+ITEM_TASKED_REGEX = re.compile(r"^tasked$")
 
 QUOTA_URL = "https://api.planet.com/auth/v1/experimental/public/my/subscriptions"
 

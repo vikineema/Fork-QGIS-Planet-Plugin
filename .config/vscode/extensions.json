@@ -39,6 +39,10 @@
     // YAML
     "redhat.vscode-yaml",
     // JSON
-    "biomejs.biome"
+    "biomejs.biome",
+    // XML
+    "redhat.vscode-xml",
+    // Others
+    "gruntfuggly.todo-tree"
   ]
 }
