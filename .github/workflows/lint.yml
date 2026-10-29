@@ -10,7 +10,7 @@ on:
 
 jobs:
   pre-commit-lint:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     name: Lint
 
     steps:
@@ -20,7 +20,7 @@ jobs:
       - name: Set up Python environment
         uses: actions/setup-python@v7
         with:
-          python-version: "3.13"
+          python-version: "3.14"
 
       - name: Set up Node.js environment
         uses: actions/setup-node@v7
