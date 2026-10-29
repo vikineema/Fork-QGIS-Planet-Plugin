@@ -119,6 +119,13 @@ plugin-zip-size: ## Get the size of the plugin zip file.
 		echo "OK: $$FILE size is $$SIZE"; \
 	fi
 
+update-resources: # Requires the pyqgis3-qt5 flake env
+	@if echo "$$name" | grep -q "qt5"; then \
+		pyrcc5 planet_explorer/resources/resources.qrc -o planet_explorer/resources/resources.py; \
+	else \
+		echo "Error: Requires resources build requires qt5 environment to run.""; \
+	fi
+
 ## QGIS targets
 
 setup-qgis: ## Fresh install of the plugin into QGIS
@@ -126,13 +133,14 @@ setup-qgis: ## Fresh install of the plugin into QGIS
 	rm -rf "$(QGIS_PLUGIN_DIR)/planet_explorer"
 	paver install --pluginpath="$(QGIS_PLUGIN_DIR)"
 
-start-qgis:
-	@# nix run .#qgis --print-build-logs
-	@scripts/start_qgis.sh
-
-start-qgis-ltr:
-	@# nix run .#qgis-ltr --print-build-logs
-	@scripts/start_qgis_ltr.sh
+start-qgis: ## Start QGIS
+	@if echo "$$name" | grep -q "qt5"; then \
+		echo "Starting QGIS LTR 3.44"; \
+		scripts/start_qgis_ltr.sh; \
+	else \
+		echo "Starting QGIS 4.2"; \
+		scripts/start_qgis.sh; \
+	fi
 
 QGIS_TEST_VERSION = 4.0.3
 run-qgis-docker:
@@ -160,3 +168,18 @@ clean-vscode: ## Clean VS Code settings and extensions
 ## Testing
 setup-notebooks: # Side load draft notebooks
 	@ln -sfn ../planet-draft-notebooks testnotebooks
+
+##  Github Workflows
+
+QGIS_TEST_VERSION = 3.44
+test-workflow:
+	GITHUB_WORKSPACE=${REPO_ROOT_DIR} QGIS_TEST_VERSION=${QGIS_TEST_VERSION} \
+		docker compose -f .docker/docker-compose.gh.yml build qgis
+	GITHUB_WORKSPACE=${REPO_ROOT_DIR} QGIS_TEST_VERSION=${QGIS_TEST_VERSION} \
+		docker compose -f .docker/docker-compose.gh.yml run qgis /usr/src/.docker/run-docker-tests.sh
+
+test-shell:
+	GITHUB_WORKSPACE=${REPO_ROOT_DIR} QGIS_TEST_VERSION=${QGIS_TEST_VERSION} \
+		docker compose -f .docker/docker-compose.gh.yml build qgis
+	GITHUB_WORKSPACE=${REPO_ROOT_DIR} QGIS_TEST_VERSION=${QGIS_TEST_VERSION} \
+		docker compose -f .docker/docker-compose.gh.yml run --rm qgis /bin/bash
